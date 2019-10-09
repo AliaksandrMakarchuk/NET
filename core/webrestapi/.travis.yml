@@ -1,0 +1,18 @@
+language: csharp
+solution: webrestapi.sln
+mono: none
+dotnet: 2.1.604
+script:
+  - dotnet restore
+  - dotnet build
+  - dotnet test
+  - dotnet publish -c Release
+notifications:
+  slack: axeltory-webrestapi:2NUCvscrV8hdbmi2F3LhRggA
+env:
+  global:
+  - 'FTP_USER=Abcdef123'
+  - 'FTP_PASSWORD=Abcdef1_3'
+after_success:
+- echo WebRestApi/bin/Release/netcoreapp2.1/publish/*
+- curl --ftp-create-dirs -T "{$(echo WebRestApi/bin/Release/netcoreapp2.1/publish/* | tr ' ' ',')}" ftp://Abcdef123:Abcdef1_3@testwebsite123.somee.com/webrestapi1/
