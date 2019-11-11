@@ -1,4 +1,3 @@
-using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Funq.Tests
@@ -20,7 +19,8 @@ namespace Funq.Tests
         }
 
         [TestMethod]
-        public void ResolveGetsDependenciesInjected(){
+        public void ResolveGetsDependenciesInjected()
+        {
             var container = new Container();
 
             container.Register<IBar>(c => new Bar());
