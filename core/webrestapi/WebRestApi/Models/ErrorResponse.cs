@@ -1,4 +1,5 @@
-﻿namespace WebRestApi.Models
+﻿#pragma warning disable 1591
+namespace WebRestApi.Models
 {
     public class ErrorResponse
     {

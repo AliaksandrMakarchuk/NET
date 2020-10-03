@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
+#pragma warning disable 1591
 namespace WebRestApi.Models
 {
     public class Message : IEquatable<Message>

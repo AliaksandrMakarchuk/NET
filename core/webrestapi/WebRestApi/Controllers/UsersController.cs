@@ -24,6 +24,9 @@ namespace WebRestApi.Controllers
         }
 
         // GET: api/users
+        /// <summary>
+        /// Get list of users
+        /// </summary>
         [HttpGet]
         public async Task<IActionResult> Get()
         {
@@ -32,6 +35,9 @@ namespace WebRestApi.Controllers
             return Ok(await _dataService.GetAllUsers());
         }
 
+        /// <summary>
+        /// Get User by Id
+        /// </summary>
         // GET: api/users/id=5
         [HttpGet("id={id}", Name = "GetById")]
         public async Task<IActionResult> Get(int id)
@@ -48,22 +54,25 @@ namespace WebRestApi.Controllers
             return Ok(user);
         }
 
-        // GET: api/users/userName=alexander
-        [HttpGet("userName={userName}", Name = "GetByName")]
-        public async Task<IActionResult> Get(string userName)
-        {
-            _logger.LogInformation(LoggingEvents.GetUsersByName, $"Get Users by Name '{userName}'");
+        // // GET: api/users/userName=alexander
+        // [HttpGet("userName={userName}", Name = "GetByName")]
+        // public async Task<IActionResult> Get(string userName)
+        // {
+        //     _logger.LogInformation(LoggingEvents.GetUsersByName, $"Get Users by Name '{userName}'");
 
-            if (string.IsNullOrWhiteSpace(userName))
-            {
-                return BadRequest(new ErrorResponse { Message = "Wrong user name" });
-            }
+        //     if (string.IsNullOrWhiteSpace(userName))
+        //     {
+        //         return BadRequest(new ErrorResponse { Message = "Wrong user name" });
+        //     }
 
-            var users = await _dataService.GetUsersByName(userName);
+        //     var users = await _dataService.GetUsersByName(userName);
 
-            return Ok(users);
-        }
+        //     return Ok(users);
+        // }
 
+        /// <summary>
+        /// Create new user
+        /// </summary>
         // POST: api/users
         [HttpPost]
         public async Task<IActionResult> Post(User user)
@@ -86,91 +95,94 @@ namespace WebRestApi.Controllers
             return Ok();
         }
 
-        // POST: api/users/3
-        [HttpPost("{senderId}")]
-        public IActionResult Post(int fromUserId, Message message)
-        {
-            _logger.LogInformation(LoggingEvents.SendMessage, $"Send message from User with Id {fromUserId} to User with Id {message?.Id}");
+        // // POST: api/users/3
+        // [HttpPost("{senderId}")]
+        // public IActionResult Post(int fromUserId, Message message)
+        // {
+        //     _logger.LogInformation(LoggingEvents.SendMessage, $"Send message from User with Id {fromUserId} to User with Id {message?.Id}");
 
-            if (message == null)
-            {
-                return BadRequest(new ErrorResponse { Message = "Wrong body" });
-            }
+        //     if (message == null)
+        //     {
+        //         return BadRequest(new ErrorResponse { Message = "Wrong body" });
+        //     }
 
-            if (string.IsNullOrWhiteSpace(message.Text))
-            {
-                return BadRequest(new ErrorResponse { Message = "Message text could not be empty. Please, fill in it." });
-            }
+        //     if (string.IsNullOrWhiteSpace(message.Text))
+        //     {
+        //         return BadRequest(new ErrorResponse { Message = "Message text could not be empty. Please, fill in it." });
+        //     }
 
-            var sender = _dataService.GetUserById(fromUserId);
+        //     var sender = _dataService.GetUserById(fromUserId);
 
-            if (sender == null)
-            {
-                _logger.LogError(LoggingEvents.GetUserById, $"Could not find User with Id {fromUserId}");
-                return BadRequest(new ErrorResponse { Message = "Wrong sender Id" });
-            }
+        //     if (sender == null)
+        //     {
+        //         _logger.LogError(LoggingEvents.GetUserById, $"Could not find User with Id {fromUserId}");
+        //         return BadRequest(new ErrorResponse { Message = "Wrong sender Id" });
+        //     }
 
-            //if (!sender.IsAuthorized)
-            //{
-            //    return BadRequest(new ErrorResponse { Message = "Sender User is not authorized. Please, authorize the User to send messages." });
-            //}
+        //     //if (!sender.IsAuthorized)
+        //     //{
+        //     //    return BadRequest(new ErrorResponse { Message = "Sender User is not authorized. Please, authorize the User to send messages." });
+        //     //}
 
-            // var receiver = _dataService.GetUserById(message.ReceiverId.Value);
+        //     // var receiver = _dataService.GetUserById(message.ReceiverId.Value);
 
-            // if (receiver == null)
-            // {
-            //     _logger.LogError(LoggingEvents.GetUserById, $"Could not find User with Id {message.ReceiverId}");
-            //     return BadRequest(new ErrorResponse { Message = "Wrong receiver Id in body" });
-            // }
+        //     // if (receiver == null)
+        //     // {
+        //     //     _logger.LogError(LoggingEvents.GetUserById, $"Could not find User with Id {message.ReceiverId}");
+        //     //     return BadRequest(new ErrorResponse { Message = "Wrong receiver Id in body" });
+        //     // }
 
-            //message.SenderId = sender.Id;
-            //message.Sender = sender;
-            //message.Receiver = receiver;
+        //     //message.SenderId = sender.Id;
+        //     //message.Sender = sender;
+        //     //message.Receiver = receiver;
 
-            //if (sender.SendMessages == null)
-            //{
-            //    sender.SendMessages = new List<Message>();
-            //}
+        //     //if (sender.SendMessages == null)
+        //     //{
+        //     //    sender.SendMessages = new List<Message>();
+        //     //}
 
-            //if (sender.ReceivedMessages == null)
-            //{
-            //    sender.ReceivedMessages = new List<Message>();
-            //}
+        //     //if (sender.ReceivedMessages == null)
+        //     //{
+        //     //    sender.ReceivedMessages = new List<Message>();
+        //     //}
 
-            //sender.SendMessages.Add(message);
+        //     //sender.SendMessages.Add(message);
 
-            //if (receiver.SendMessages == null)
-            //{
-            //    receiver.SendMessages = new List<Message>();
-            //}
+        //     //if (receiver.SendMessages == null)
+        //     //{
+        //     //    receiver.SendMessages = new List<Message>();
+        //     //}
 
-            //if (receiver.ReceivedMessages == null)
-            //{
-            //    receiver.ReceivedMessages = new List<Message>();
-            //}
+        //     //if (receiver.ReceivedMessages == null)
+        //     //{
+        //     //    receiver.ReceivedMessages = new List<Message>();
+        //     //}
 
-            //receiver.ReceivedMessages.Add(message);
+        //     //receiver.ReceivedMessages.Add(message);
 
-            //try
-            //{
-            //    _messageRepository.Add(message);
-            //    _userRepository.Update(sender);
-            //    _userRepository.Update(receiver);
-            //}
-            //catch (DbUpdateException ex)
-            //{
-            //    _logger.LogError(LoggingEvents.ErrorOnSavingChanges, $"Error on saving changes.{Environment.NewLine}Exception message: {ex.Message}{Environment.NewLine}Exception StackTrace: {ex.StackTrace}");
-            //    return BadRequest(new ErrorResponse { Message = "Error has accured on saving changes" });
-            //}
+        //     //try
+        //     //{
+        //     //    _messageRepository.Add(message);
+        //     //    _userRepository.Update(sender);
+        //     //    _userRepository.Update(receiver);
+        //     //}
+        //     //catch (DbUpdateException ex)
+        //     //{
+        //     //    _logger.LogError(LoggingEvents.ErrorOnSavingChanges, $"Error on saving changes.{Environment.NewLine}Exception message: {ex.Message}{Environment.NewLine}Exception StackTrace: {ex.StackTrace}");
+        //     //    return BadRequest(new ErrorResponse { Message = "Error has accured on saving changes" });
+        //     //}
 
-            return Ok();
-        }
+        //     return Ok();
+        // }
 
+        /// <summary>
+        /// Update user
+        /// </summary>
         // PUT: api/users/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, User user)
+        public async Task<IActionResult> Put(int id, string user)
         {
-            _logger.LogInformation(LoggingEvents.GetUserById, $"Update User with Id {id}. Set IsAuthorized: {user.IsAuthorized}");
+            _logger.LogInformation(LoggingEvents.GetUserById, $"Update User with Id {id}");
 
             var existingUser = await _dataService.GetUserById(id);
 
@@ -178,8 +190,6 @@ namespace WebRestApi.Controllers
             {
                 return BadRequest(new ErrorResponse { Message = "User with specified identifier could not be found" });
             }
-
-            existingUser.IsAuthorized = user.IsAuthorized;
 
             try
             {

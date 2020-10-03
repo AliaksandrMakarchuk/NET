@@ -49,14 +49,12 @@ namespace WebRestApi.Tests
                     Id = 1,
                     FirstName= "First",
                     LastName= "Last",
-                    IsAuthorized = false
                 },
                 new User
                 {
                     Id = 2,
                     FirstName = "Second",
                     LastName = "Last",
-                    IsAuthorized = false
                 }
             };
         }
@@ -120,7 +118,7 @@ namespace WebRestApi.Tests
         [TestMethod]
         public async Task UpdateUser_Test()
         {
-            User user = new User { Id = 1, FirstName = "fn", LastName = "ln", IsAuthorized = true };
+            User user = new User { Id = 1, FirstName = "fn", LastName = "ln" };
             _userRepositoryMock.Setup(x => x.UpdateAsync(It.IsAny<User>())).Returns<User>(u => Task.FromResult(u));
 
             var updatedUser = await _dataService.UpdateUser(user);

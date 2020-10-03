@@ -1,4 +1,6 @@
-﻿using WebRestApi.Models;
+﻿
+#pragma warning disable 1591
+using WebRestApi.Models;
 
 namespace WebRestApi.Repository
 {

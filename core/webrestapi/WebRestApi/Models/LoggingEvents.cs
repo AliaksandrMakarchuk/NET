@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Logging;
 
+#pragma warning disable 1591
 public static class LoggingEvents {
     public static EventId GetAllUsers => new EventId(0);
     public static EventId GetUserById => new EventId(1);

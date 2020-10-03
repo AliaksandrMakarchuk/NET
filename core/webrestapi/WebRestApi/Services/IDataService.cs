@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using WebRestApi.Models;
 
+#pragma warning disable 1591
 namespace WebRestApi.Services
 {
     public interface IDataService

@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using WebRestApi.Models;
 
+#pragma warning disable 1591
 namespace WebRestApi.Repository
 {
     public abstract class UserRepositoryBase : RepositoryBase<User, WebRestApiContext>
@@ -45,7 +46,6 @@ namespace WebRestApi.Repository
 
             existingUser.FirstName = user.FirstName;
             existingUser.LastName = user.LastName;
-            existingUser.IsAuthorized = user.IsAuthorized;
 
             Context.Update(existingUser);
             await Context.SaveChangesAsync();

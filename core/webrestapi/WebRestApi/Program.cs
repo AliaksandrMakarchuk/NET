@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using WebRestApi.Logger;
 using System.Net;
 
+#pragma warning disable 1591
 namespace WebRestApi
 {
     public class Program
@@ -14,7 +15,6 @@ namespace WebRestApi
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-            .UseIISIntegration()
             .ConfigureLogging((context, builder) =>
             {
                 builder.AddFile();

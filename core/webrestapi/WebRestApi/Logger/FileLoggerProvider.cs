@@ -1,13 +1,13 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.AzureAppServices.Internal;
 using Microsoft.Extensions.Options;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
+#pragma warning disable 1591
 namespace WebRestApi.Logger
 {
     [ProviderAlias("File")]

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
+#pragma warning disable 1591
 namespace WebRestApi.Models
 {
     public class User : IEquatable<User>
@@ -10,7 +11,6 @@ namespace WebRestApi.Models
         public int Id { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public bool IsAuthorized { get; set; }
 
         public ICollection<Message> SendMessages { get; set; }
         public ICollection<Message> ReceivedMessages { get; set; }
@@ -26,14 +26,13 @@ namespace WebRestApi.Models
                    Id == other.Id &&
                    FirstName == other.FirstName &&
                    LastName == other.LastName &&
-                   IsAuthorized == other.IsAuthorized &&
                    EqualityComparer<ICollection<Message>>.Default.Equals(SendMessages, other.SendMessages) &&
                    EqualityComparer<ICollection<Message>>.Default.Equals(ReceivedMessages, other.ReceivedMessages);
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(Id, FirstName, LastName, IsAuthorized, SendMessages, ReceivedMessages);
+            return HashCode.Combine(Id, FirstName, LastName, SendMessages, ReceivedMessages);
         }
 
         public static bool operator ==(User left, User right)

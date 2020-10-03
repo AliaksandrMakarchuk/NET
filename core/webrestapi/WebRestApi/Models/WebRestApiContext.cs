@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
+#pragma warning disable 1591
 namespace WebRestApi.Models
 {
     public class WebRestApiContext : DbContext

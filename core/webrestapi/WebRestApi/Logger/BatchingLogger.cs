@@ -2,6 +2,7 @@
 using System;
 using System.Text;
 
+#pragma warning disable 1591
 namespace WebRestApi.Logger
 {
     public class BatchingLogger : ILogger
