@@ -6,7 +6,6 @@ namespace WebRestApi.Models
     {
         public WebRestApiContext(DbContextOptions<WebRestApiContext> options) : base(options)
         {
-            Database.EnsureCreated();
         }
 
         public virtual DbSet<User> Users { get; set; }
@@ -15,6 +14,7 @@ namespace WebRestApi.Models
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+            optionsBuilder.UseSqlite("Data Source=messaging.db");
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

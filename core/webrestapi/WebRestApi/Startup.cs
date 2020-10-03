@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using WebRestApi.Logger;
+using WebRestApi.Models;
 using WebRestApi.Repository;
 using WebRestApi.Services;
 
@@ -29,6 +30,7 @@ namespace WebRestApi
             // services.AddDbContext<WebRestApiContext>(
             //     options => options.
             //     .(Configuration.GetConnectionString($"WebRestApi{Configuration.GetValue<string>("EnvironmentName","HomeEnv")}")));
+            services.AddDbContext<WebRestApiContext>();
             services.AddScoped<UserRepositoryBase, UserRepository>();
             services.AddScoped<MessageRepositoryBase, MessageRepository>();
             services.AddScoped<CommentRepositoryBase, CommentRepository>();
