@@ -11,7 +11,8 @@ namespace WebRestApi.Repository
 
         public override async Task<IEnumerable<User>> GetByNameAsync(string userName)
         {
-            return await Context.Users.FromSql($"SELECT * FROM Users WHERE UPPER(FirstName) LIKE '%{userName}%' or UPPER(LastName) LIKE '%{userName}%'").ToListAsync();
+            // return await Context.Users.FromSql($"SELECT * FROM Users WHERE UPPER(FirstName) LIKE '%{userName}%' or UPPER(LastName) LIKE '%{userName}%'").ToListAsync();
+            return new User[0];
         }
     }
 }

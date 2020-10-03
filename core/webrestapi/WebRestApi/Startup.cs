@@ -1,11 +1,9 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using WebRestApi.Logger;
-using WebRestApi.Models;
 using WebRestApi.Repository;
 using WebRestApi.Services;
 
@@ -15,7 +13,7 @@ namespace WebRestApi
     {
         public IConfigurationRoot Configuration { get; set; }
 
-        public Startup(IHostingEnvironment env)
+        public Startup(IWebHostEnvironment env)
         {
             var builder = new ConfigurationBuilder()
                .SetBasePath(env.ContentRootPath)
@@ -27,8 +25,10 @@ namespace WebRestApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-            services.AddDbContext<WebRestApiContext>(options => options.UseSqlServer(Configuration.GetConnectionString($"WebRestApi{Configuration.GetValue<string>("EnvironmentName","HomeEnv")}")));
+            services.AddMvcCore().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+            // services.AddDbContext<WebRestApiContext>(
+            //     options => options.
+            //     .(Configuration.GetConnectionString($"WebRestApi{Configuration.GetValue<string>("EnvironmentName","HomeEnv")}")));
             services.AddScoped<UserRepositoryBase, UserRepository>();
             services.AddScoped<MessageRepositoryBase, MessageRepository>();
             services.AddScoped<CommentRepositoryBase, CommentRepository>();
@@ -37,12 +37,13 @@ namespace WebRestApi
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
+            var x = env.EnvironmentName;
+            // if (env.IsDevelopment())
+            // {
+            //     app.UseDeveloperExceptionPage();
+            // }
 
             app.UseHttpsRedirection();
             app.UseMvc();
