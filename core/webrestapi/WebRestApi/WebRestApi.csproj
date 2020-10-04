@@ -39,9 +39,15 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.4" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.5.0" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.7.0" />
     <PackageReference Include="System.Linq" Version="4.3.0" />
     <PackageReference Include="System.Linq.Expressions" Version="4.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\WebRestApi.Service\WebRestApi.Service.csproj" />
+    <ProjectReference Include="..\WebRestApi.DataAccess\WebRestApi.DataAccess.csproj" />
+    <ProjectReference Include="..\WebRestApi.Logger\WebRestApi.Logger.csproj" />
   </ItemGroup>
 
 </Project>

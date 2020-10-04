@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using WebRestApi.Models;
 using System;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
-using WebRestApi.Services;
+using WebRestApi.Service;
+using WebRestApi.Service.Models;
 
 namespace WebRestApi.Controllers
 {

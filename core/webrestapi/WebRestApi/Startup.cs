@@ -5,10 +5,11 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using WebRestApi.DataAccess;
+using WebRestApi.DataAccess.Repository;
 using WebRestApi.Logger;
-using WebRestApi.Models;
-using WebRestApi.Repository;
-using WebRestApi.Services;
+using WebRestApi.Service;
+using WebRestApi.Service.Repository;
 
 #pragma warning disable 1591
 namespace WebRestApi
@@ -35,7 +36,7 @@ namespace WebRestApi
             // services.AddDbContext<WebRestApiContext>(
             //     options => options.
             //     .(Configuration.GetConnectionString($"WebRestApi{Configuration.GetValue<string>("EnvironmentName","HomeEnv")}")));
-            services.AddDbContext<WebRestApiContext>();
+            services.AddDbContext<AbstractDbContext, WebRestApiContext>();
             services.AddScoped<UserRepositoryBase, UserRepository>();
             services.AddScoped<MessageRepositoryBase, MessageRepository>();
             services.AddScoped<CommentRepositoryBase, CommentRepository>();
@@ -66,7 +67,7 @@ namespace WebRestApi
             app.UseSwagger();
 
             app.UseSwaggerUI(c => {
-                c.SwaggerEndpoint("swagger/v1/swagger.json", "QuizGame API v1");
+                c.SwaggerEndpoint("swagger/v1/swagger.json", "Web Rest API v1");
                 c.RoutePrefix = string.Empty;
             });
 
