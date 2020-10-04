@@ -15,10 +15,10 @@ namespace WebRestApi
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-            .ConfigureLogging((context, builder) =>
-            {
-                builder.AddFile();
-            })
+            // .ConfigureLogging((context, builder) =>
+            // {
+            //     builder.AddFile();
+            // })
             .UseKestrel(serverOptions =>
             {
                 serverOptions.Listen(IPAddress.Loopback, 3000);
