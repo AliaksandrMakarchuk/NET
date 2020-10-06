@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 using System;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
@@ -23,35 +24,53 @@ namespace WebRestApi.Controllers
             _dataService = dataService;
         }
 
-        // GET: api/users
         /// <summary>
         /// Get list of users
         /// </summary>
+        /// <remarks></remarks>
+        /// <returns>Collection of existing users</returns>
+        /// <response code="200">If operation has been completed without any exception</response>
+        /// <response code="500">If something wrong had happen during getting users</response>
         [HttpGet]
         public async Task<IActionResult> Get()
         {
             _logger.LogInformation(LoggingEvents.GetAllUsers, "Getting all existing users");
 
-            return Ok(await _dataService.GetAllUsers());
+            try
+            {
+                var users = await _dataService.GetAllUsers();
+                return Ok(users);
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new ErrorResponse { Message = "Something went wrong" });
+            }
         }
 
         /// <summary>
         /// Get User by Id
         /// </summary>
-        // GET: api/users/id=5
-        [HttpGet("id={id}", Name = "GetById")]
+        /// <remarks></remarks>
+        /// <param name="id"></param>
+        /// <returns>User by Id</returns>
+        /// <response code="200">If operation has been completed without any exception</response>
+        /// <response code="500">If something wrong had happen during gettting the user</response>
+        [HttpGet("{id}", Name = "GetById")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Get(int id)
         {
             _logger.LogInformation(LoggingEvents.GetUserById, "Get User by Id {0}", id);
 
-            var user = await _dataService.GetUserById(id);
-
-            if (user == null)
+            try
             {
-                return BadRequest(new ErrorResponse { Message = "User with specified identifier could not be found" });
+                var user = await _dataService.GetUserById(id);
+                return Ok(user);
             }
-
-            return Ok(user);
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new ErrorResponse { Message = "Something went wrong" });
+            }
         }
 
         // // GET: api/users/userName=alexander
@@ -73,26 +92,35 @@ namespace WebRestApi.Controllers
         /// <summary>
         /// Create new user
         /// </summary>
-        // POST: api/users
+        /// <remarks>
+        /// </remarks>
+        /// <param name="user">User</param>
+        /// <returns>New created User</returns>
+        /// <response code="201">If new User has been successfully created</response>
+        /// <response code="400">If the First or Last name was not specified</response>
+        /// <response code="500">If something wrong had happen during the User creation</response>
         [HttpPost]
-        public async Task<IActionResult> Post(User user)
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> Post([FromBody] User user)
         {
-            if (string.IsNullOrWhiteSpace(user?.FirstName) || string.IsNullOrWhiteSpace(user?.LastName))
+            if (string.IsNullOrWhiteSpace(user.FirstName) || string.IsNullOrWhiteSpace(user.LastName))
             {
                 return BadRequest(new ErrorResponse { Message = "User first name and last name should be filled in" });
             }
 
             try
             {
-                await _dataService.CreateNewUser(user.FirstName, user.LastName);
+                var newUser = await _dataService.CreateNewUser(user.FirstName, user.LastName);
+                return Created("here", newUser);
             }
-            catch (DbUpdateException ex)
+            catch (Exception ex)
             {
                 _logger.LogError(LoggingEvents.ErrorOnSavingChanges, $"Error on creating new User.{Environment.NewLine}Exception message: {ex.Message}{Environment.NewLine}Exception StackTrace: {ex.StackTrace}");
-                return BadRequest(new ErrorResponse { Message = "Error has accured on saving changes" });
+                var error = new ErrorResponse { Message = "Error has accured on saving changes" };
+                return StatusCode(StatusCodes.Status500InternalServerError, error);
             }
-
-            return Ok();
         }
 
         // // POST: api/users/3
@@ -178,76 +206,92 @@ namespace WebRestApi.Controllers
         /// <summary>
         /// Update user
         /// </summary>
-        // PUT: api/users/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, string user)
-        {
-            _logger.LogInformation(LoggingEvents.GetUserById, $"Update User with Id {id}");
-
-            var existingUser = await _dataService.GetUserById(id);
-
-            if (existingUser == null)
-            {
-                return BadRequest(new ErrorResponse { Message = "User with specified identifier could not be found" });
-            }
-
-            try
-            {
-                await _dataService.UpdateUser(existingUser);
-            }
-            catch (DbUpdateException ex)
-            {
-                _logger.LogError(LoggingEvents.ErrorOnSavingChanges, $"Error on authorizing User with Id {id}.{Environment.NewLine}Exception message: {ex.Message}{Environment.NewLine}Exception StackTrace: {ex.StackTrace}");
-                return BadRequest(new ErrorResponse { Message = "Error has accured on saving changes" });
-            }
-
-            return Ok();
-        }
-
-        // PUT: api/users
+        /// <remarks></remarks>
+        /// <param name="user">User with new properties</param>
+        /// <returns>User updated parameters</returns>
+        /// <response code="200">If the User successfully updated</response>
+        /// <response code="400">If could not find User by User.Id</response>
+        /// <response code="500">If something wrong had happend during user update</response>
         [HttpPut]
-        public IActionResult Put(User user)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> Put([FromBody] User user)
         {
-            _logger.LogInformation(LoggingEvents.UpdateUserName, $"Update User with Id {user.Id}. Set User: {user}");
-
-            var existingUser = _dataService.GetUserById(user.Id);
-
-            //if (existingUser == null)
-            //{
-            //    return BadRequest(new ErrorResponse { Message = "User with specified identifier could not be found" });
-            //}
-
-            //if (!string.IsNullOrWhiteSpace(user.FirstName))
-            //{
-            //    existingUser.FirstName = user.FirstName;
-            //}
-
-            //if (!string.IsNullOrWhiteSpace(user.LastName))
-            //{
-            //    existingUser.LastName = user.LastName;
-            //}
+            _logger.LogInformation(LoggingEvents.GetUserById, $"Update User with Id {user.Id}");
 
             try
             {
-                //_userRepository.Update(existingUser);
+                var existingUser = await _dataService.GetUserById(user.Id);
+
+                if (existingUser == null)
+                {
+                    return BadRequest(new ErrorResponse { Message = "User with specified identifier could not be found" });
+                }
+
+                var updatedUser = await _dataService.UpdateUser(existingUser);
+                return Ok(updatedUser);
             }
             catch (DbUpdateException ex)
             {
-                _logger.LogError(LoggingEvents.ErrorOnSavingChanges, $"Error on updating User with Id {user.Id}.{Environment.NewLine}Exception message: {ex.Message}{Environment.NewLine}Exception StackTrace: {ex.StackTrace}");
-                return BadRequest(new ErrorResponse { Message = "Error has accured on saving changes" });
+                _logger.LogError(LoggingEvents.ErrorOnSavingChanges, $"Error on authorizing User with Id {user.Id}.{Environment.NewLine}Exception message: {ex.Message}{Environment.NewLine}Exception StackTrace: {ex.StackTrace}");
+                return StatusCode(StatusCodes.Status500InternalServerError, new ErrorResponse { Message = "Error has accured on saving changes" });
             }
-
-            return Ok();
         }
 
-        // DELETE: api/users/5
+        // // PUT: api/users
+        // [HttpPut]
+        // public IActionResult Put(User user)
+        // {
+        //     _logger.LogInformation(LoggingEvents.UpdateUserName, $"Update User with Id {user.Id}. Set User: {user}");
+
+        //     var existingUser = _dataService.GetUserById(user.Id);
+
+        //     //if (existingUser == null)
+        //     //{
+        //     //    return BadRequest(new ErrorResponse { Message = "User with specified identifier could not be found" });
+        //     //}
+
+        //     //if (!string.IsNullOrWhiteSpace(user.FirstName))
+        //     //{
+        //     //    existingUser.FirstName = user.FirstName;
+        //     //}
+
+        //     //if (!string.IsNullOrWhiteSpace(user.LastName))
+        //     //{
+        //     //    existingUser.LastName = user.LastName;
+        //     //}
+
+        //     try
+        //     {
+        //         //_userRepository.Update(existingUser);
+        //     }
+        //     catch (DbUpdateException ex)
+        //     {
+        //         _logger.LogError(LoggingEvents.ErrorOnSavingChanges, $"Error on updating User with Id {user.Id}.{Environment.NewLine}Exception message: {ex.Message}{Environment.NewLine}Exception StackTrace: {ex.StackTrace}");
+        //         return BadRequest(new ErrorResponse { Message = "Error has accured on saving changes" });
+        //     }
+
+        //     return Ok();
+        // }
+
+        /// <summary>
+        /// Delete user
+        /// </summary>
+        /// <param name="id">User Id</param>
+        /// <remarks></remarks>
+        /// <response code="200">If User has heen successfully deleted</response>
+        /// <response code="500">If something went wrong during removing the User</response>
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public IActionResult Delete([FromBody] int id)
         {
             _logger.LogInformation(LoggingEvents.DeleteUser, $"Delete User with Id {id}");
 
             try
             {
+                _dataService.DeleteUser(id);
                 //_userRepository.Delete(id);
             }
             catch (Exception ex)
