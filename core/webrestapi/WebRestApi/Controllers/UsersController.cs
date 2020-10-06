@@ -282,7 +282,7 @@ namespace WebRestApi.Controllers
         /// <remarks></remarks>
         /// <response code="200">If User has heen successfully deleted</response>
         /// <response code="500">If something went wrong during removing the User</response>
-        [HttpDelete("{id}")]
+        [HttpDelete]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public IActionResult Delete([FromBody] int id)
