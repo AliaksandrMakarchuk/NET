@@ -9,6 +9,7 @@ using WebRestApi.Service.Models;
 
 namespace WebRestApi.Controllers
 {
+    ///
     [Route("api/[controller]")]
     [ApiController]
     public class UsersController : ControllerBase
@@ -16,6 +17,7 @@ namespace WebRestApi.Controllers
         private ILogger _logger;
         private IDataService _dataService;
 
+        ///
         public UsersController(
             ILogger<UsersController> logger,
             IDataService dataService)
