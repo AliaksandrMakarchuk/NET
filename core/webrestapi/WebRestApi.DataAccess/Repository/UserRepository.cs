@@ -1,13 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using WebRestApi.Service;
 using WebRestApi.Service.Models;
 using WebRestApi.Service.Repository;
+using Microsoft.EntityFrameworkCore;
 
 namespace WebRestApi.DataAccess.Repository
 {
     public class UserRepository : UserRepositoryBase
     {
-        public UserRepository(WebRestApiContext context) : base(context) { }
+        public UserRepository(AbstractDbContext context) : base(context) { }
 
         public override async Task<IEnumerable<User>> GetByNameAsync(string userName)
         {
@@ -17,16 +19,15 @@ namespace WebRestApi.DataAccess.Repository
 
         public override async Task<User> AddAsync(User user)
         {
-            await Context.Users.AddAsync(user);
+            var newUser = await Context.Users.AddAsync(user);
             await Context.SaveChangesAsync();
 
-            return user;
+            return newUser.Entity;
         }
 
         public override async Task<IEnumerable<User>> GetAllAsync()
         {
-            await Task.Delay(1);
-            return Context.Users.Local;
+            return await Context.Users.ToListAsync();
         }
 
         public override async Task<User> GetByIdAsync(int id)
@@ -51,10 +52,10 @@ namespace WebRestApi.DataAccess.Repository
             existingUser.FirstName = user.FirstName;
             existingUser.LastName = user.LastName;
 
-            Context.Update(existingUser);
+            var newUser = Context.Update(existingUser);
             await Context.SaveChangesAsync();
 
-            return existingUser;
+            return newUser.Entity;
         }
 
         public override async Task<User> DeleteAsync(User user)

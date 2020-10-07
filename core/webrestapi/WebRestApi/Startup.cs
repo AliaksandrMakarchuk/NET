@@ -36,7 +36,9 @@ namespace WebRestApi
             // services.AddDbContext<WebRestApiContext>(
             //     options => options.
             //     .(Configuration.GetConnectionString($"WebRestApi{Configuration.GetValue<string>("EnvironmentName","HomeEnv")}")));
-            services.AddDbContext<AbstractDbContext, WebRestApiContext>();
+            services.AddScoped<AbstractDbContext, WebRestApiContext>();
+            services.AddDbContext<AbstractDbContext>();
+            // services.AddScoped<AbstractDbContext, WebRestApiContext>();
             services.AddScoped<UserRepositoryBase, UserRepository>();
             services.AddScoped<MessageRepositoryBase, MessageRepository>();
             services.AddScoped<CommentRepositoryBase, CommentRepository>();
