@@ -9,6 +9,7 @@ namespace WebRestApi.DataAccess
         public WebRestApiContext(DbContextOptions<AbstractDbContext> options)
         : base(options) { 
             Database.EnsureCreated();
+            Database.Migrate();
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
