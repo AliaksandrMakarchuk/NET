@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using WebRestApi.Service.Models;
+using WebRestApi.Service.Models.Client;
 
 namespace WebRestApi.Service
 {
@@ -14,8 +15,8 @@ namespace WebRestApi.Service
 
         Task<User> DeleteUser(int id);
 
-        Task<User> UpdateUser(User user);
+        Task<User> UpdateUser(ClientUser user);
 
-        Task<User> CreateNewUser(string firstName, string lastName);
+        Task<User> CreateNewUser(ClientUser user);
     }
 }

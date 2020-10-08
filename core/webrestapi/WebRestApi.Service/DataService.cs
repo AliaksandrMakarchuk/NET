@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using WebRestApi.Service.Models;
+using WebRestApi.Service.Models.Client;
 using WebRestApi.Service.Repository;
 
 namespace WebRestApi.Service
@@ -37,9 +39,30 @@ namespace WebRestApi.Service
             return await _userRepository.GetByNameAsync(userName);
         }
 
-        public async Task<User> UpdateUser(User user)
+        public async Task<User> UpdateUser(ClientUser user)
         {
-            return await _userRepository.UpdateAsync(user);
+            try
+            {
+                var existingUser = await _userRepository.GetByIdAsync(user.Id);
+
+                if (existingUser == null)
+                {
+                    return null;
+                }
+
+                return await _userRepository.UpdateAsync(new User
+                {
+                    Id = user.Id,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName
+                });
+            }
+            catch (Exception ex)
+            {
+                /// TODO: add logging
+                throw ex;
+            }
+
         }
 
         public async Task<User> DeleteUser(int id)
@@ -54,12 +77,12 @@ namespace WebRestApi.Service
             return await _userRepository.DeleteAsync(user);
         }
 
-        public async Task<User> CreateNewUser(string firstName, string lastName)
+        public async Task<User> CreateNewUser(ClientUser user)
         {
             return await _userRepository.AddAsync(new User
             {
-                FirstName = firstName,
-                LastName = lastName
+                FirstName = user.FirstName,
+                LastName = user.LastName
             });
         }
     }

@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 using WebRestApi.Service;
 using WebRestApi.Service.Models;
+using WebRestApi.Service.Models.Client;
 
 namespace WebRestApi.Controllers
 {
@@ -105,7 +106,7 @@ namespace WebRestApi.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Post([FromBody] User user)
+        public async Task<IActionResult> Post([FromBody] ClientUser user)
         {
             if (string.IsNullOrWhiteSpace(user.FirstName) || string.IsNullOrWhiteSpace(user.LastName))
             {
@@ -114,7 +115,7 @@ namespace WebRestApi.Controllers
 
             try
             {
-                var newUser = await _dataService.CreateNewUser(user.FirstName, user.LastName);
+                var newUser = await _dataService.CreateNewUser(user);
                 return Created("here", newUser);
             }
             catch (Exception ex)
@@ -218,20 +219,28 @@ namespace WebRestApi.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Put([FromBody] User user)
+        public async Task<IActionResult> Put([FromBody] ClientUser user)
         {
             _logger.LogInformation(LoggingEvents.GetUserById, $"Update User with Id {user.Id}");
 
             try
             {
-                var existingUser = await _dataService.GetUserById(user.Id);
+                // var existingUser = await _dataService.GetUserById(user.Id);
 
-                if (existingUser == null)
-                {
+                // if (existingUser == null)
+                // {
+                //     return BadRequest(new ErrorResponse { Message = "User with specified identifier could not be found" });
+                // }
+
+                // var updatedUser = await _dataService.UpdateUser(existingUser);
+                // return Ok(updatedUser);
+
+                var updatedUser = await _dataService.UpdateUser(user);
+
+                if(updatedUser == null){
                     return BadRequest(new ErrorResponse { Message = "User with specified identifier could not be found" });
                 }
 
-                var updatedUser = await _dataService.UpdateUser(existingUser);
                 return Ok(updatedUser);
             }
             catch (DbUpdateException ex)
