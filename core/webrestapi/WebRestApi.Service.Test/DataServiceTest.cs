@@ -107,7 +107,7 @@ namespace WebRestApi.Service.Tests
             User user = null;
             _userRepositoryMock.Setup(x => x.AddAsync(It.IsAny<User>())).Callback<User>(x => user = x);
 
-            await _dataService.CreateNewUser("fn", "ln");
+            await _dataService.CreateNewUser(new Models.Client.ClientUser() { FirstName = "fn", LastName = "ln"});
 
             _userRepositoryMock.Verify(x => x.AddAsync(It.IsAny<User>()));
             Assert.IsNotNull(user);
@@ -119,9 +119,14 @@ namespace WebRestApi.Service.Tests
         public async Task UpdateUser_Test()
         {
             User user = new User { Id = 1, FirstName = "fn", LastName = "ln" };
+            _userRepositoryMock.Setup(x => x.GetByIdAsync(It.Is<int>(id => id == 1))).Returns<int>(id => Task.FromResult(user));
             _userRepositoryMock.Setup(x => x.UpdateAsync(It.IsAny<User>())).Returns<User>(u => Task.FromResult(u));
 
-            var updatedUser = await _dataService.UpdateUser(user);
+            var updatedUser = await _dataService.UpdateUser(new Models.Client.ClientUser() {
+                Id = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName
+            });
 
             _userRepositoryMock.Verify(x => x.UpdateAsync(It.Is<User>(u => u == user)));
         }

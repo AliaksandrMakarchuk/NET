@@ -13,9 +13,10 @@ namespace WebRestApi.DataAccess.Repository
 
         public override async Task<IEnumerable<User>> GetByNameAsync(string userName)
         {
-            // return await Context.Users.FromSql($"SELECT * FROM Users WHERE UPPER(FirstName) LIKE '%{userName}%' or UPPER(LastName) LIKE '%{userName}%'").ToListAsync();
-            return await Task.FromResult<IEnumerable<User>>(new List<User>());
-        }
+            string query = $"SELECT * FROM Users WHERE UPPER(FirstName) LIKE '%{userName}%' or UPPER(LastName) LIKE '%{userName}%'";
+            return await Context.Users.FromSqlRaw(query).ToListAsync();
+            // return await Task.FromResult<IEnumerable<User>>(new List<User>());
+            }
 
         public override async Task<User> AddAsync(User user)
         {
