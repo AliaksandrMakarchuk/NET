@@ -1,25 +1,38 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
+using WebRestApi.WebApp.Models;
 
-namespace WebRestApi.WebApp.Pages
-{
+namespace WebRestApi.WebApp.Pages {
     public class IndexModel : PageModel
+{
+    private readonly CustomerDbContext _context;
+
+    public IndexModel(CustomerDbContext context)
     {
-        private readonly ILogger<IndexModel> _logger;
-
-        public IndexModel(ILogger<IndexModel> logger)
-        {
-            _logger = logger;
-        }
-
-        public void OnGet()
-        {
-
-        }
+        _context = context;
     }
+
+    public IList<Customer> Customer { get; set; }
+
+    public async Task OnGetAsync()
+    {
+        Customer = await _context.Customers.ToListAsync();
+    }
+
+    public async Task<IActionResult> OnPostDeleteAsync(int id)
+    {
+        var contact = await _context.Customers.FindAsync(id);
+
+        if (contact != null)
+        {
+            _context.Customers.Remove(contact);
+            await _context.SaveChangesAsync();
+        }
+
+        return RedirectToPage();
+    }
+}
 }
