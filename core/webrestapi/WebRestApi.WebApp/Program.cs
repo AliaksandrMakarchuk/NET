@@ -1,7 +1,6 @@
 using System.Net;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore;
 
 namespace WebRestApi.WebApp
 {
@@ -12,15 +11,15 @@ namespace WebRestApi.WebApp
             CreateHostBuilder(args).Build().Run();
         }
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-            .ConfigureWebHostDefaults(webHostBuilder =>
-            {
-                webHostBuilder.UseKestrel(serverOptions =>
+        public static IWebHostBuilder CreateHostBuilder(string[] args)
+        {
+            return WebHost.CreateDefaultBuilder(args)
+            .UseKestrel(serverOptions =>
                 {
                     serverOptions.Listen(IPAddress.Loopback, 3010);
                 })
                 .UseStartup<Startup>();
-            });
+        }
     }
+
 }
