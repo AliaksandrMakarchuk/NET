@@ -2,11 +2,30 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <EnableDefaultContentItems>false</EnableDefaultContentItems>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.2.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.0" />
     <PackageReference Include="microsoft.entityframeworkcore.inmemory" Version="5.0.0" />
+  </ItemGroup>
+
+  <!-- copy static files to output directory -->
+  <ItemGroup>
+    <Content Include="wwwroot\**" Link="wwwroot\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Pages\Error.cshtml" />
+    <Content Include="Pages\Index.cshtml" />
+    <Content Include="Pages\Edit.cshtml" />
+    <Content Include="Pages\Create.cshtml" />
+    <Content Include="Pages\Privacy.cshtml" />
+    <Content Include="Pages\Shared\_Layout.cshtml" />
+    <Content Include="Pages\Shared\_ValidationScriptsPartial.cshtml" />
+    <Content Include="Pages\_ViewImports.cshtml" />
+    <Content Include="Pages\_ViewStart.cshtml" />
   </ItemGroup>
 
 </Project>
