@@ -22,7 +22,7 @@
             "preLaunchTask": "build",
             "program": "${workspaceFolder}/WebRestApi.WebApp/bin/Debug/netcoreapp3.1/WebRestApi.WebApp",
             "args": [],
-            "cwd": "${workspaceFolder}",
+            "cwd": "${workspaceFolder}/WebRestApi.WebApp/bin/Debug/netcoreapp3.1/",
             "stopAtEntry": false,
             "console": "internalConsole"
         }
