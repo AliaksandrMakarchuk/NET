@@ -20,6 +20,11 @@ namespace WebRestApi.WebApp.Pages
         public IActionResult OnGet(int id)
         {
             Customer = _context.Customers.SingleOrDefault(c => c.Id == id);
+
+            if(Customer == null){
+                return RedirectToPage("./Index");
+            }
+
             return Page();
         }
 
@@ -33,7 +38,7 @@ namespace WebRestApi.WebApp.Pages
             _context.Customers.Update(Customer);
             await _context.SaveChangesAsync();
 
-            return RedirectToPage("/Index");
+            return RedirectToPage("./Index");
         }
     }
 }
