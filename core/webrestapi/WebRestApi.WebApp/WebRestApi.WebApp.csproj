@@ -22,6 +22,7 @@
     <Content Include="Pages\Edit.cshtml" />
     <Content Include="Pages\Create.cshtml" />
     <Content Include="Pages\CreateMovie.cshtml" />
+    <Content Include="Pages\Login.cshtml" />
     <Content Include="Pages\Privacy.cshtml" />
     <Content Include="Pages\Shared\_Layout.cshtml" />
     <Content Include="Pages\Shared\_ValidationScriptsPartial.cshtml" />
