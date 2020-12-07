@@ -5,8 +5,6 @@
     ViewData["Title"] = "Login";
 }
 
-<p>Login</p>
-
 <form method="post">
     <div asp-validation-summary="All"></div>
     <span asp-validation-for="Credentials.Name"></span>
@@ -19,5 +17,8 @@
     Password:
     <input asp-for="Credentials.Password" type="password" />
 
-    <input type="submit" />
+    <div>
+        <input type="submit" value="Login" />
+    </div>
+    
 </form>
