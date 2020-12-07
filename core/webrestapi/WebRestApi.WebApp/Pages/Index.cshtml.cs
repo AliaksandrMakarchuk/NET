@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -8,18 +9,22 @@ using WebRestApi.WebApp.Models;
 namespace WebRestApi.WebApp.Pages {
     public class IndexModel : PageModel {
         private readonly CustomerDbContext _context;
-        private readonly CredentialsManager _credentialsManager;
+        private readonly ICredentialsManager _credentialsManager;
 
-        public IndexModel (CustomerDbContext context, CredentialsManager credentialsManager) {
+        public IndexModel (CustomerDbContext context, ICredentialsManager credentialsManager) {
             _context = context;
             this._credentialsManager = credentialsManager;
+            Customer = new List<Customer>();
         }
 
+        [BindProperty]
         public IList<Customer> Customer { get; set; }
 
         public IActionResult OnGet () {
+            Console.WriteLine($"GET: {_credentialsManager.IsAuthorized}");
             if(!_credentialsManager.IsAuthorized) {
-                return RedirectToPage("/Login");
+                return Redirect("/Login?from=/Index");
+                // return RedirectToPage("/Login/Index");
             }
 
             return Page();

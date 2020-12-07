@@ -18,7 +18,8 @@ namespace WebRestApi.WebApp {
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices (IServiceCollection services) {
             services.AddDbContext<CustomerDbContext> (options => options.UseInMemoryDatabase ("name"));
-            services.AddScoped<CredentialsManager>();
+            services.AddSingleton<ICredentialsManager, CredentialsManager>();
+            services.AddSingleton<INetworkManager, NetworkManager>();
 
             services.AddRazorPages();
 

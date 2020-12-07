@@ -1,5 +1,5 @@
 namespace WebRestApi.WebApp {
-    public class CredentialsManager : ICredentialsManager {
+    public interface ICredentialsManager {
         public bool IsAuthorized { get; set; }
     }
 }
