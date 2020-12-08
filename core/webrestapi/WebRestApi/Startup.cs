@@ -43,10 +43,10 @@ namespace WebRestApi
             services.AddScoped<MessageRepositoryBase, MessageRepository>();
             services.AddScoped<CommentRepositoryBase, CommentRepository>();
             services.AddScoped<IDataService, DataService>();
-            services.Configure<FileLoggerOptions>(Configuration.GetSection("Logger"));
-
-
             services.AddSwaggerGen();
+
+
+            services.Configure<FileLoggerOptions>(Configuration.GetSection("Logger"));
             services.ConfigureSwaggerGen(setup =>{
                 var basePath = System.AppDomain.CurrentDomain.BaseDirectory;
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";

@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -6,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using WebRestApi.WebApp.Models;
 
 namespace WebRestApi.WebApp {
     public class Startup {
@@ -18,10 +20,23 @@ namespace WebRestApi.WebApp {
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices (IServiceCollection services) {
             services.AddDbContext<CustomerDbContext> (options => options.UseInMemoryDatabase ("name"));
-            services.AddSingleton<ICredentialsManager, CredentialsManager>();
-            services.AddSingleton<INetworkManager, NetworkManager>();
+            services.AddSingleton<ICredentialsManager, CredentialsManager> ();
+            services.AddSingleton<INetworkManager, NetworkManager> ();
 
-            services.AddRazorPages();
+            // services.AddRazorPages ();
+
+            services.AddIdentityCore<ApplicationUser> (options => {
+                    options.Password.RequireDigit = true;
+                    options.Password.RequireLowercase = true;
+                    options.Password.RequireUppercase = true;
+                    options.Password.RequiredLength = 6;
+                    options.Password.RequireNonAlphanumeric = false;
+                    options.Password.RequiredUniqueChars = 6;
+                })
+                .AddRoles<IdentityRole> ()
+                .AddRoleStore<CustomerDbContext> ()
+                .AddUserStore<CustomerDbContext> ()
+                .AddDefaultTokenProviders ();
 
             // services.AddIdentityCore<IdentityUser> (options => {
             //         options.SignIn.RequireConfirmedAccount = true;
@@ -36,11 +51,19 @@ namespace WebRestApi.WebApp {
             //     options.Conventions.AllowAnonymousToPage ("/Login");
             // });
 
-            // services.AddAuthorizationCore (options => {
-            //     options.FallbackPolicy = new AuthorizationPolicyBuilder ()
-            //         .RequireAuthenticatedUser ()
-            //         .Build ();
-            // });
+            services.AddAuthenticationCore()
+            .AddIdentityServerJwt();
+
+            services.AddAuthorizationCore (options => {
+                options.FallbackPolicy = new AuthorizationPolicyBuilder ()
+                    .RequireAuthenticatedUser ()
+                    .Build ();
+            });
+
+            services.AddRazorPages ().AddRazorPagesOptions (options => {
+                // options.Conventions.AuthorizeFolder ("/Account/Manage");
+                options.Conventions.AuthorizePage ("/Index");
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -58,7 +81,8 @@ namespace WebRestApi.WebApp {
 
             app.UseRouting ();
 
-            // app.UseAuthorization ();
+            app.UseAuthentication();
+            app.UseAuthorization ();
 
             app.UseEndpoints (endpoints => {
                 endpoints.MapRazorPages ();
