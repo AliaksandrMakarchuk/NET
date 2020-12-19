@@ -1,35 +1,37 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Text;
 using Newtonsoft.Json;
-using System.Collections.Generic;
+using SocketServer.Models;
 
 namespace SocketServer
 {
     class Program
     {
-        private static IDictionary<Client, Socket> _clients = new Dictionary<Client, Socket>();
+        private byte[] _buffer = new byte[1024];
+
+        private ClientManager _clientManager = new ClientManager();
 
         static async Task Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            Console.WriteLine("=== Server v1.0 ===");
+
             var socket = new Socket(SocketType.Stream, ProtocolType.Tcp);
             socket.ReceiveBufferSize = 1024;
-            Console.WriteLine("Bind EndPoint");
-            // await socket.ConnectAsync(IPAddress.Parse("192.168.1.39"), 1234);
             socket.Bind(new IPEndPoint(IPAddress.Loopback, 1234));
-            Console.WriteLine("Start listening");
             socket.Listen(10);
+            Console.WriteLine("Started");
 
             while (true)
             {
-                Console.WriteLine("Waiting for a new client");
                 var acceptedSocket = await socket.AcceptAsync();
 
-                await new TaskFactory().StartNew(async (clientSocket) =>
+                await new TaskFactory().StartNew(async(clientSocket) =>
                 {
                     await new Program().WorkWithSocket(clientSocket as Socket);
                 }, acceptedSocket);
@@ -38,82 +40,59 @@ namespace SocketServer
 
         private async Task WorkWithSocket(Socket socket)
         {
-            Client client = null;
-            Console.WriteLine("Start work with client");
+            Console.WriteLine("New client");
+            var clientId = _clientManager.AddClient();
+            Console.WriteLine($"DEBUG. ClientId: {clientId}");
 
-            while (true)
+            var buffer = Encoding.UTF32.GetBytes($"Ping: {clientId}");
+
+            // establish connection
+            // var args = new SocketAsyncEventArgs();
+            // args.SetBuffer(buffer);
+            // args.Completed += OnSendCompleted;
+            // var res = socket.SendAsync(args);
+
+            var res = socket.BeginSend(buffer, 0, buffer.Length, SocketFlags.None, SendCallback, new object());
+            res = socket.BeginReceive(_buffer, 0, 1024, SocketFlags.None, ReceiveCallback, new object());
+            while (!res.AsyncWaitHandle.WaitOne()) { await Task.Delay(1000); }
+
+            if (!_clientManager.IsConnected(clientId))
             {
-                var byteArray = new byte[1024];
-                var memoryBuffer = new Memory<byte>(byteArray);
-                var cancellationToken = new CancellationTokenSource().Token;
+                Console.WriteLine("Connection refused");
+            }
 
-                Console.WriteLine("Start receiving");
-                var result = await socket.ReceiveAsync(memoryBuffer, SocketFlags.None, cancellationToken);
-                KeyValuePair<Client, Socket> currentSocket = new KeyValuePair<Client, Socket>();
+            Console.WriteLine("Run completed");
+        }
 
-                foreach (var sct in _clients)
-                {
-                    if (sct.Value == socket)
-                    {
-                        currentSocket = new KeyValuePair<Client, Socket>(sct.Key, sct.Value);
-                        break;
-                    }
-                }
+        private void SendCallback(IAsyncResult result)
+        {
+            Console.WriteLine("Send complete");
+        }
 
-                var text = Encoding.UTF32.GetString(byteArray);
+        private void ReceiveCallback(IAsyncResult result)
+        {
+            var stateObject = (StateObject) result.AsyncState;
+            var socket = stateObject.WorkSocket;
 
-                ReadOnlyMemory<byte> buffer = null;
+            var read = socket.EndReceive(result);
 
-                if (string.IsNullOrEmpty(currentSocket.Key?.Nick))
-                {
-                    try
-                    {
-                        client = JsonConvert.DeserializeObject<Client>(text);
-                        _clients.Add(client, socket);
-
-                        byteArray = Encoding.UTF32.GetBytes("You are connected"); ;
-                        buffer = new ReadOnlyMemory<byte>(byteArray);
-                        await socket.SendAsync(buffer, SocketFlags.None);
-
-                        foreach (var activeClient in _clients)
-                        {
-                            if (activeClient.Key.Nick != client.Nick)
-                            {
-                                byteArray = Encoding.UTF32.GetBytes($"Client '{client.Nick}' connectecd to chat"); ;
-                                buffer = new ReadOnlyMemory<byte>(byteArray);
-                                await activeClient.Value.SendAsync(buffer, SocketFlags.None);
-                            }
-                        }
-                    }
-                    catch
-                    {
-                        byteArray = Encoding.UTF32.GetBytes("Should setup name first");
-                        buffer = new ReadOnlyMemory<byte>(byteArray);
-
-                        await socket.SendAsync(buffer, SocketFlags.None);
-                    }
-
-                    continue;
-                }
-
-                Console.WriteLine($"Message: {text}");
-
-                byteArray = Encoding.UTF32.GetBytes($"[{currentSocket.Key.Nick}]: {text}"); ;
-                buffer = new ReadOnlyMemory<byte>(byteArray);
-
-                foreach (var activeClient in _clients)
-                {
-                    if (activeClient.Key.Nick != currentSocket.Key.Nick)
-                    {
-                        await activeClient.Value.SendAsync(buffer, SocketFlags.None);
-                    }
-                }
+            Thread.Sleep(3000);
+            var received = Encoding.UTF32.GetString(_buffer);
+            Console.WriteLine($"DEBUG. Received: {received}");
+            var regex = new Regex("([0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}): ([a-zA-Z]*)");
+            var match = regex.Match(received);
+            if (match.Success)
+            {
+                var stringGuid = match.Groups[1].Value;
+                Guid guid;
+                if (!Guid.TryParse(stringGuid, out guid)) { return; }
+                var nick = match.Groups[3].Value;
+                _clientManager.SetClientNick(guid, nick);
+            }
+            else
+            {
+                Console.WriteLine($"DEBUG. Not matched: {received}");
             }
         }
-    }
-
-    class Client
-    {
-        public string Nick { get; set; }
     }
 }
