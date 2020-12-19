@@ -1,0 +1,24 @@
+@page
+@model WebRestApi.WebApp.Pages.LoginModel
+
+@{
+    ViewData["Title"] = "Login";
+}
+
+<form method="post">
+    <div asp-validation-summary="All"></div>
+    <span asp-validation-for="Credentials.Name"></span>
+    Name:
+    <input asp-for="Credentials.Name" />
+
+    <br>
+    <div asp-validation-summary="All"></div>
+    <span asp-validation-for="Credentials.Password"></span>
+    Password:
+    <input asp-for="Credentials.Password" type="password" />
+
+    <div>
+        <input type="submit" value="Login" />
+    </div>
+    
+</form>

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -44,28 +45,31 @@ namespace Multithreading.Race
         {
             _cts = new CancellationTokenSource();
 
-            var taskFactory = new TaskFactory(_cts.Token);
+            var taskFactory = new TaskFactory();
             var i = 0;
 
             _gameObjects.ToList().ForEach(gameObject =>
             {
-                _tasks[i++] = taskFactory.StartNew(() => UpdateRacerState(gameObject));
+                _tasks[i++] = taskFactory.StartNew(async () => await UpdateRacerState(gameObject), _cts.Token);
             });
 
-            var continuationTask = new TaskFactory().ContinueWhenAny(_tasks, (t) =>
-            {
-                _userInterface.PrintWinner(GetWinner()?.Racer.Mark);
-            });
+            Task.WaitAll(_tasks);
 
-            continuationTask.Wait();
+            // var continuationTask = new TaskFactory().ContinueWhenAll(_tasks, (t) =>
+            // {
+            //     // _cts.Cancel();
+            //     // _userInterface.PrintWinner(GetWinner()?.Racer.Mark);
+            // });
+
+            // continuationTask.Wait();
         }
 
-        private void UpdateRacerState(GameObject gameObject)
+        private async Task UpdateRacerState(GameObject gameObject)
         {
             while (!_cts.IsCancellationRequested)
             {
                 var interval = _engine.GetUpdateInterval();
-                Thread.Sleep(interval);
+                await Task.Delay(interval);
 
                 lock (_locker)
                 {
@@ -80,6 +84,8 @@ namespace Multithreading.Race
                     CheckIfGameOver();
                 }
             }
+
+            Console.WriteLine($"Task #{gameObject.Racer.Mark} has been stopped");
         }
 
         private void CheckIfGameOver()

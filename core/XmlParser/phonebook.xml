@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<PhoneBook xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="www.contoso.com">
+  <Contacts>
+    <Contact>
+      <Name>Alexander</Name>
+      <Phone>1234</Phone>
+    </Contact>
+    <Contact>
+      <Name>UnderAlex</Name>
+      <Phone>985</Phone>
+    </Contact>
+    <Contact>
+      <Name>Anna</Name>
+      <Phone>3434</Phone>
+    </Contact>
+    <Contact>
+      <Name>Hann</Name>
+      <Phone>34i44</Phone>
+    </Contact>
+  </Contacts>
+</PhoneBook>

@@ -1,0 +1,41 @@
+@page
+@model WebRestApi.WebApp.Pages.MovieModel
+
+@{
+    ViewData["Title"] = "Create a Movie";
+}
+
+<p>Create a Movie</p>
+
+<form method="post">
+    <div asp-validation-summary="ModelOnly"></div>
+    <span asp-validation-for="Movie.Title"></span>
+    Title:
+    <input asp-for="Movie.Title" />
+
+    <br/>
+    <span asp-validation-for="Movie.ReleaseDate"></span>
+    Release Date:
+    <input asp-for="Movie.ReleaseDate" />
+
+    <br/>
+    <span asp-validation-for="Movie.Price"></span>
+    Price:
+    <input asp-for="Movie.Price" />
+
+    <br/>
+    <span asp-validation-for="Movie.Genre"></span>
+    Genre:
+    <input asp-for="Movie.Genre" />
+
+    <br/>
+    <span asp-validation-for="Movie.Rating"></span>
+    Rating:
+    <input asp-for="Movie.Rating" />
+
+    <input type="submit" />
+</form>
+
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
