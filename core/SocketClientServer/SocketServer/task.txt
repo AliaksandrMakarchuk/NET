@@ -1,0 +1,8 @@
+Protocol design:
+1. Send 'ping'
+2. Received 'pong'
+3. Send 'name'
+4.1. Received '<client name>'
+4.1.1. Connection established
+4.2. Not Received '<client name>'
+4.2.1. Connection refused
