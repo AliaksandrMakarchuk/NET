@@ -25,18 +25,18 @@ namespace WebRestApi.WebApp {
 
             // services.AddRazorPages ();
 
-            services.AddIdentityCore<ApplicationUser> (options => {
-                    options.Password.RequireDigit = true;
-                    options.Password.RequireLowercase = true;
-                    options.Password.RequireUppercase = true;
-                    options.Password.RequiredLength = 6;
-                    options.Password.RequireNonAlphanumeric = false;
-                    options.Password.RequiredUniqueChars = 6;
-                })
-                .AddRoles<IdentityRole> ()
-                .AddRoleStore<CustomerDbContext> ()
-                .AddUserStore<CustomerDbContext> ()
-                .AddDefaultTokenProviders ();
+            // services.AddIdentityCore<ApplicationUser> (options => {
+            //         options.Password.RequireDigit = true;
+            //         options.Password.RequireLowercase = true;
+            //         options.Password.RequireUppercase = true;
+            //         options.Password.RequiredLength = 6;
+            //         options.Password.RequireNonAlphanumeric = false;
+            //         options.Password.RequiredUniqueChars = 6;
+            //     })
+            //     .AddRoles<IdentityRole> ()
+            //     .AddRoleStore<CustomerDbContext> ()
+            //     .AddUserStore<CustomerDbContext> ()
+            //     .AddDefaultTokenProviders ();
 
             // services.AddIdentityCore<IdentityUser> (options => {
             //         options.SignIn.RequireConfirmedAccount = true;
@@ -51,18 +51,18 @@ namespace WebRestApi.WebApp {
             //     options.Conventions.AllowAnonymousToPage ("/Login");
             // });
 
-            services.AddAuthenticationCore()
-            .AddIdentityServerJwt();
+            // services.AddAuthenticationCore()
+            // .AddIdentityServerJwt();
 
-            services.AddAuthorizationCore (options => {
-                options.FallbackPolicy = new AuthorizationPolicyBuilder ()
-                    .RequireAuthenticatedUser ()
-                    .Build ();
-            });
+            // services.AddAuthorizationCore (options => {
+            //     options.FallbackPolicy = new AuthorizationPolicyBuilder ()
+            //         .RequireAuthenticatedUser ()
+            //         .Build ();
+            // });
 
             services.AddRazorPages ().AddRazorPagesOptions (options => {
                 // options.Conventions.AuthorizeFolder ("/Account/Manage");
-                options.Conventions.AuthorizePage ("/Index");
+                // options.Conventions.AuthorizePage ("/Index");
             });
         }
 
@@ -76,13 +76,13 @@ namespace WebRestApi.WebApp {
                 app.UseHsts ();
             }
 
-            app.UseHttpsRedirection ();
+            // app.UseHttpsRedirection ();
             app.UseStaticFiles ();
 
             app.UseRouting ();
 
-            app.UseAuthentication();
-            app.UseAuthorization ();
+            // app.UseAuthentication();
+            // app.UseAuthorization ();
 
             app.UseEndpoints (endpoints => {
                 endpoints.MapRazorPages ();
