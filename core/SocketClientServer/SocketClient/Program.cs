@@ -46,7 +46,7 @@ namespace SocketClient
             //     await ProcessConnection(clientSocket as Socket);
             // }, socket);
 
-            while (!result.AsyncWaitHandle.WaitOne())
+            while (true)
             {
                 // Console.Write("Input message: ");
                 // var message = Console.ReadLine();

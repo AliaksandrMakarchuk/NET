@@ -52,8 +52,9 @@ namespace SocketServer
             // args.Completed += OnSendCompleted;
             // var res = socket.SendAsync(args);
 
-            var res = socket.BeginSend(buffer, 0, buffer.Length, SocketFlags.None, SendCallback, new object());
-            res = socket.BeginReceive(_buffer, 0, 1024, SocketFlags.None, ReceiveCallback, new object());
+            Console.WriteLine($"DEBUG. Send {buffer.Length} bytes");
+            var res = socket.BeginSend(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback(SendCallback), socket);
+            res = socket.BeginReceive(_buffer, 0, 1024, SocketFlags.None, ReceiveCallback, new StateObject{WorkSocket = socket});
             while (!res.AsyncWaitHandle.WaitOne()) { await Task.Delay(1000); }
 
             if (!_clientManager.IsConnected(clientId))
@@ -66,6 +67,11 @@ namespace SocketServer
 
         private void SendCallback(IAsyncResult result)
         {
+            var socket = (Socket) result.AsyncState;
+            var res = socket.EndSend(result);
+            Console.WriteLine($"Was send {res} bytes");
+            Console.WriteLine($"Sync: {result.CompletedSynchronously}");
+            Console.WriteLine($"State: {result.AsyncState?.GetType()}");
             Console.WriteLine("Send complete");
         }
 
