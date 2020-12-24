@@ -26,6 +26,7 @@ namespace concurrent_input_output
 
             tokenSource.Cancel();
             Console.WriteLine($"User input: {userInput}");
+            Thread.Sleep(1000);
         }
 
         private static async Task ConcurrentOutput(object tokenObject)
@@ -33,20 +34,28 @@ namespace concurrent_input_output
             var token = (CancellationToken) tokenObject;
             var counter = 0;
 
-            while (true)
+            while (!token.IsCancellationRequested)
             {
                 lock(_locker)
                 {
-                    Console.
-                    var curentPosition = Console.GetCursorPosition();
+                    (int, int) curentPosition = (Console.CursorLeft, Console.CursorTop);
+                    (ConsoleColor, ConsoleColor) currentColors = (Console.BackgroundColor, Console.ForegroundColor);
 
                     Console.SetCursorPosition(0, 0);
+                    
+                    Console.BackgroundColor = ConsoleColor.White;
+                    Console.ForegroundColor = ConsoleColor.Green;
                     Console.WriteLine($"Output: {counter++}");
-                    Console.SetCursorPosition(curentPosition.Left, curentPosition.Top);
+                    Console.BackgroundColor = currentColors.Item1;
+                    Console.ForegroundColor = currentColors.Item2;
+
+                    Console.SetCursorPosition(curentPosition.Item1, curentPosition.Item2);
                 }
 
                 await Task.Delay(150);
             }
+
+            Console.WriteLine($"THREAD {Thread.CurrentThread.ManagedThreadId} has been stopped");
         }
     }
 }
