@@ -14,11 +14,11 @@
 - Contains references to all available windows: main + prompts
 - Contains id of an [**Active**][1] window
 
+[1]: A window wich should handle user input
+
 ## Input Manager
 - Contains EventHandlers for a required inputs
 - Send user input to a corresponding window
 
 ## Flow
 User press key -> **ConsoleUIManager** handles the input -> 
-
-[1]: A window wich should handle user input
