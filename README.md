@@ -12,7 +12,7 @@
 
 ## Windows Manager
 - Contains references to all available windows: main + prompts
-- Contains id of an [**Active**][1] window
+- Contains id of an [Active][1] window
 
 [1]: A window wich should handle user input
 
