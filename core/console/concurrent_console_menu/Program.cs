@@ -232,6 +232,11 @@ namespace concurrent_console_menu {
         public int Top { get; set; }
     }
 
+    class WindowSize {
+        public int Width { get; set; }
+        public int Height { get; set; }
+    }
+
     class MenuItem {
         public string Name { get; set; }
         public ICommand Command { get; set; }
