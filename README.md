@@ -23,4 +23,4 @@ User press key -> **ConsoleUIManager** handles the input ->
 
 
 
-[1]: A window wich should handle user input
+[1]:  "A window wich should handle user input"
