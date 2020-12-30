@@ -15,30 +15,57 @@ namespace console_ui.models.Test
         {
             _intersectionChecker = new IntersectionChecker();
             _areaBuilder = new ConcreteAreaBuilder();
-            _newArea = _areaBuilder
-                .SetName("new")
-                .SetPrinter(new ConcreteAreaPrinter())
-                .SetStartPosition(new Position(2, 1))
-                .SetAreaSize(new AreaSize(3, 2))
-                .Build();
+            _newArea = GenerateArea(1, 2, 3, 2);
         }
 
         [TestMethod]
-        public void FirstAreaAboveAndLeft_NoIntersection_Test()
+        [DataRow(0, 0, 3, 1, DisplayName = "ExistingAreaAboveLeft")]
+        [DataRow(1, 0, 2, 3, DisplayName = "ExistingAreaOnLeft")]
+        [DataRow(3, 0, 3, 3, DisplayName = "ExistingAreaBelowLeft")]
+        [DataRow(2, 5, 4, 2, DisplayName = "ExistingAreaOnRight")]
+        [DataRow(0, 5, 1, 2, DisplayName = "ExistingAreaAboveRight")]
+        [DataRow(4, 5, 3, 3, DisplayName = "ExistingAreaBelowRight")]
+        [DataRow(0, 2, 3, 1, DisplayName = "ExistingAreaAbove")]
+        [DataRow(3, 2, 3, 2, DisplayName = "ExistingAreaBelow")]
+        public void AreIntersect_NoIntersection_Test(int top, int left, int width, int height)
         {
             // arrange
-            var firstArea = _areaBuilder
-                .SetName("first")
-                .SetPrinter(new ConcreteAreaPrinter())
-                .SetStartPosition(new Position(0, 0))
-                .SetAreaSize(new AreaSize(3, 1))
-                .Build();
+            var existingArea = GenerateArea(top, left, width, height);
 
             // act
-            var result = _intersectionChecker.AreIntersect(firstArea, _newArea);
+            var result = _intersectionChecker.AreIntersect(existingArea, _newArea);
 
             // assert
             Assert.IsFalse(result, "Should not intersect");
+        }
+
+        [TestMethod]
+        [DataRow(0, 0, 3, 2, DisplayName = "ExistingAreaAboveLeft")]
+        [DataRow(1, 0, 3, 1, DisplayName = "ExistingAreaOnLeft")]
+        [DataRow(2, 1, 3, 2, DisplayName = "ExistingAreaBelowLeft")] //
+        [DataRow(0, 4, 2, 1, DisplayName = "ExistingAreaAboveRight")] //
+        [DataRow(1, 3, 3, 3, DisplayName = "ExistingAreaOnRight")]
+        [DataRow(2, 4, 3, 2, DisplayName = "ExistingAreaBelowRight")]
+        [DataRow(1, 2, 3, 2, DisplayName = "ExistingAreaOverlapNewOne")]
+        public void AreIntersect_AreasIntersected_Test(int top, int left, int width, int height)
+        {
+            // arrange
+            var existingArea = GenerateArea(top, left, width, height);
+
+            // act
+            var result = _intersectionChecker.AreIntersect(existingArea, _newArea);
+
+            // assert
+            Assert.IsTrue(result, "Should intersect");
+        }
+
+        private AbstractArea GenerateArea(int top, int left, int width, int height)
+        {
+            return _areaBuilder
+                .SetPrinter(new ConcreteAreaPrinter())
+                .SetStartPosition(new Position(top, left))
+                .SetAreaSize(new AreaSize(width, height))
+                .Build();
         }
 
         private class ConcreteAreaPrinter : IAreaPrinter
