@@ -2,9 +2,10 @@
 ## Console UI manager
 ### Models
 #### Window
+Is a container of [window areas][window_area]
 Contains:
 - several [window areas][window_area]
-- zero/one [input manager][]
+- zero/one [input manager][input_manager]
 ##### Main (screen)
 ##### Pop-up
 #### Window area
@@ -30,9 +31,16 @@ Contains:
 - Send user input to a corresponding window
 
 ## Flow
-User press key -> **ConsoleUIManager** handles the input -> Gets an [active window][active_window] -> Fire event into inside **InputManager**
+User press key -> **ConsoleUIManager** handles the input -> Gets an [active window][active_window] -> Resend key into related **InputManager** -> Handle input
 
 ## Dictionary
 <a name="active_window">**Active window**</a> - A window wich should handle user input
+<a name="window_area"></a>
+<a name="input_manager"></a>
+
+## UML
+[wiki](https://github.com/jaime-olivares/yuml-diagram/wiki)
 
 [active_window]: #active_window "A window wich should handle user input"
+[window_area]: #window_area
+[input_manager]: #input_manager
