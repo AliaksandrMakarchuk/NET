@@ -3,28 +3,28 @@ namespace console_ui.models
     /// <summary>
     /// 
     /// </summary>
-    public class Position
+    public class AreaSize
     {
         /// <summary>
         /// 
         /// </summary>
         /// <value></value>
-        public int Left { get; set; }
+        public int Width { get; set; }
         /// <summary>
         /// 
         /// </summary>
         /// <value></value>
-        public int Top { get; set; }
+        public int Height { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="top"></param>
-        /// <param name="left"></param>
-        public Position(int top, int left)
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        public AreaSize(int width, int height)
         {
-            Left = left;
-            Top = top;
+            Height = height;
+            Width = width;
         }
     }
 }
