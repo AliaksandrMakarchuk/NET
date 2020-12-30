@@ -21,7 +21,7 @@ namespace console_ui.models
             return second.StartPosition.Left >= first.StartPosition.Left &&
                 second.StartPosition.Left < first.StartPosition.Left + first.Size.Width &&
                 second.StartPosition.Top >= first.StartPosition.Top &&
-                second.StartPosition.Top < second.StartPosition.Top + second.Size.Height;
+                second.StartPosition.Top < first.StartPosition.Top + first.Size.Height;
         }
     }
 }
