@@ -1,21 +1,25 @@
-using System.Linq;
-using console_ui.models;
+using System;
 
-namespace console_ui {
-    public static class ConsoleUIManager {
-        private static InputManager _inputManager;
-        private static WindowsManager _windowsManager;
+namespace console_ui
+{
+    public class ConsoleUIManager
+    {
+        private InputManager _inputManager;
+        private WindowsManager _windowsManager;
 
-        public static void Initialize (InputManager inputManager, WindowsManager windowsManager) {
+        public void Initialize(InputManager inputManager, WindowsManager windowsManager)
+        {
             _inputManager = inputManager;
             _windowsManager = windowsManager;
         }
 
-        public static void Start () {
-            _windowsManager.Windows[0].WindowPrinter.Draw (_windowsManager.Windows[0]);
-            if (_windowsManager.ActiveWindow != _windowsManager.Windows[0]) {
-                _windowsManager.ActiveWindow.WindowPrinter.Draw (_windowsManager.ActiveWindow);
+        public void Start()
+        {
+            if (_windowsManager.ActiveWindow == null)
+            {
+                return;
             }
+            _windowsManager.ActiveWindow.Print();
         }
     }
 }
