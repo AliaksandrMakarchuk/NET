@@ -42,7 +42,7 @@ namespace console_ui.models
         /// 
         /// </summary>
         /// <value></value>
-        public InputType InputType { get; protected set; }
+        public InputType? InputType { get; protected set; }
         /// <summary>
         /// 
         /// </summary>
