@@ -3,12 +3,11 @@
 ### Models
 #### Window
 Is a container of [window areas][window_area]
-Contains:
-- several [window areas][window_area]
-- zero/one [input manager][input_manager]
 ##### Main (screen)
 ##### Pop-up
 #### Window area
+Can handle user input - base on specific Flag
+Contains related InputManager
 #### InputManager
 #### Command
 
