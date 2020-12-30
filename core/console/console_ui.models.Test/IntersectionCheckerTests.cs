@@ -42,8 +42,8 @@ namespace console_ui.models.Test
         [TestMethod]
         [DataRow(0, 0, 3, 2, DisplayName = "ExistingAreaAboveLeft")]
         [DataRow(1, 0, 3, 1, DisplayName = "ExistingAreaOnLeft")]
-        [DataRow(2, 1, 3, 2, DisplayName = "ExistingAreaBelowLeft")] //
-        [DataRow(0, 4, 2, 1, DisplayName = "ExistingAreaAboveRight")] //
+        [DataRow(2, 1, 3, 2, DisplayName = "ExistingAreaBelowLeft")]
+        [DataRow(0, 4, 2, 2, DisplayName = "ExistingAreaAboveRight")]
         [DataRow(1, 3, 3, 3, DisplayName = "ExistingAreaOnRight")]
         [DataRow(2, 4, 3, 2, DisplayName = "ExistingAreaBelowRight")]
         [DataRow(1, 2, 3, 2, DisplayName = "ExistingAreaOverlapNewOne")]

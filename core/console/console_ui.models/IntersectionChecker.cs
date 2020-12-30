@@ -13,15 +13,30 @@ namespace console_ui.models
         /// <returns></returns>
         public bool AreIntersect(AbstractArea first, AbstractArea second)
         {
-            return CheckIntersection(first, second) || CheckIntersection(second, first);
+            return CheckLeftIntersection(first, second) ||
+                CheckLeftIntersection(second, first);
         }
 
-        private bool CheckIntersection(AbstractArea first, AbstractArea second)
+        private bool CheckLeftIntersection(AbstractArea left, AbstractArea right)
         {
-            return second.StartPosition.Left >= first.StartPosition.Left &&
-                second.StartPosition.Left < first.StartPosition.Left + first.Size.Width &&
-                second.StartPosition.Top >= first.StartPosition.Top &&
-                second.StartPosition.Top < first.StartPosition.Top + first.Size.Height;
+            return CheckTopLeftIntersection(left, right) ||
+                CheckBottomLeftIntersection(left, right);
+        }
+
+        private bool CheckTopLeftIntersection(AbstractArea left, AbstractArea right)
+        {
+            return right.StartPosition.Left >= left.StartPosition.Left &&
+                right.StartPosition.Left < left.StartPosition.Left + left.Size.Width &&
+                right.StartPosition.Top >= left.StartPosition.Top &&
+                right.StartPosition.Top < left.StartPosition.Top + left.Size.Height;
+        }
+
+        private bool CheckBottomLeftIntersection(AbstractArea left, AbstractArea right)
+        {
+            return right.StartPosition.Left > left.StartPosition.Left &&
+                right.StartPosition.Left < left.StartPosition.Left + left.Size.Width &&
+                right.StartPosition.Top + right.Size.Height > left.StartPosition.Top &&
+                right.StartPosition.Top + right.Size.Height <= left.StartPosition.Top + left.Size.Height;
         }
     }
 }
