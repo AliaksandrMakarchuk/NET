@@ -20,6 +20,12 @@ namespace console_ui
                 return;
             }
             _windowsManager.ActiveWindow.Print();
+
+            while(true) {
+                var key = Console.ReadKey(true);
+
+                
+            }
         }
     }
 }

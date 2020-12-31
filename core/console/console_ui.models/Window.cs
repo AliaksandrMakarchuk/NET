@@ -37,8 +37,25 @@ namespace console_ui.models
         {
             foreach (var area in _areas)
             {
-                area.Print();
+                // if concurrent - start task
+                
+                area.Print(); // default behavior
             }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="keyInfo"></param>
+        public void HandleInput(ConsoleKeyInfo keyInfo)
+        {
+            var activeArea = _areas.SingleOrDefault(x => x.IsActive);
+            if (activeArea == null)
+            {
+                return;
+            }
+
+            activeArea.Handle(keyInfo.Key);
         }
     }
 }
