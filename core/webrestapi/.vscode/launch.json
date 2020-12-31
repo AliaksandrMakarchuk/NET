@@ -5,17 +5,6 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": ".NET Core Launch (console)",
-            "type": "coreclr",
-            "request": "launch",
-            "preLaunchTask": "build",
-            "program": "${workspaceFolder}/WebRestApi/bin/Debug/netcoreapp3.1/WebRestApi",
-            "args": [],
-            "cwd": "${workspaceFolder}",
-            "stopAtEntry": false,
-            "console": "internalConsole"
-        },
-        {
             "name": "Web App Launch (console)",
             "type": "coreclr",
             "request": "launch",
@@ -24,7 +13,10 @@
             "args": [],
             "cwd": "${workspaceFolder}/WebRestApi.WebApp/bin/Debug/netcoreapp3.1/",
             "stopAtEntry": false,
-            "console": "internalConsole"
+            "console": "internalConsole",
+            "launchBrowser": {
+                "enabled": true
+            }
         }
     ]
 }
