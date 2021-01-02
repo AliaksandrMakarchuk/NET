@@ -11,7 +11,7 @@ using WebRestApi.Service.Models.Client;
 namespace WebRestApi.Controllers
 {
     ///
-    [Route("api/{controller}")]
+    [Route("api/[controller]")]
     [ApiController]
     public class AdminController : ControllerBase {
         private ILogger _logger;

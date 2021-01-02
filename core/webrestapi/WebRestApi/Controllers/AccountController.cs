@@ -1,18 +1,18 @@
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using WebRestApi.Service;
 using WebRestApi.Service.Models;
 
 namespace WebRestApi.Controllers
 {
-    [Route("api/{controller}")]
+    [Route("api/[controller]")]
     [ApiController]
     public class AccountController : ControllerBase
     {
@@ -31,7 +31,7 @@ namespace WebRestApi.Controllers
         [HttpPost]
         public async Task<IActionResult> Token(string login, string password)
         {
-            var identity = await GetIdentity(login, password);
+            var identity = GetIdentity(login, password);
 
             if (identity == null)
             {
@@ -60,9 +60,9 @@ namespace WebRestApi.Controllers
             return new JsonResult(response);
         }
 
-        private async Task<ClaimsIdentity> GetIdentity(string login, string password)
+        private ClaimsIdentity GetIdentity(string login, string password)
         {
-            var user = await _dbContext.Users.SingleOrDefaultAsync(x => x.Email == login && x.Password == password);
+            var user = _dbContext.Users.SingleOrDefault(x => x.Email == login && x.Password == password);
 
             if (user != null)
             {
