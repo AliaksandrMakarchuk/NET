@@ -10,15 +10,13 @@ namespace WebRestApi.WebApp.Pages
     [Authorize]
     public class IndexModel : PageModel
     {
-        private readonly ICredentialsManager _credentialsManager;
         public string Name { get; private set; }
 
         [BindProperty]
         public IList<Customer> Customers { get; set; }
 
-        public IndexModel(ICredentialsManager credentialsManager)
+        public IndexModel()
         {
-            this._credentialsManager = credentialsManager;
             Customers = new List<Customer>();
         }
 

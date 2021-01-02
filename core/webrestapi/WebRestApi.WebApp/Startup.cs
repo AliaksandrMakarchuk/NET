@@ -22,7 +22,6 @@ namespace WebRestApi.WebApp
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<UserContext>(options => options.UseInMemoryDatabase("users"));
-            services.AddSingleton<ICredentialsManager, CredentialsManager>();
 
             // установка конфигурации подключения
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)

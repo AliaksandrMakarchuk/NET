@@ -12,7 +12,6 @@ namespace WebRestApi.WebApp.Pages
 {
     public class LoginModel : PageModel
     {
-        private readonly ICredentialsManager _credentialsManager;
         private string _from;
         private readonly UserContext _userContext;
 
@@ -20,10 +19,8 @@ namespace WebRestApi.WebApp.Pages
         public Credentials Credentials { get; set; }
 
         public LoginModel(
-            ICredentialsManager credentialsManager,
             UserContext userContext)
         {
-            _credentialsManager = credentialsManager;
             _userContext = userContext;
         }
 
