@@ -11,9 +11,11 @@ namespace WebRestApi.Service.Models
         public string Text { get; set; }
 
         public int? SenderId { get; set; }
+        [NotMapped]
         public User Sender { get; set; }
 
         public int? ReceiverId { get; set; }
+        [NotMapped]
         public User Receiver { get; set; }
 
         public ICollection<Comment> Comments { get; set; }
