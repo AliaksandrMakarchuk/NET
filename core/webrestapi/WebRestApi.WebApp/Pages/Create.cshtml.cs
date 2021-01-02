@@ -7,11 +7,8 @@ namespace WebRestApi.WebApp.Pages
 {
     public class CreateModel : PageModel
     {
-        private readonly CustomerDbContext _context;
-
-        public CreateModel(CustomerDbContext context)
+        public CreateModel()
         {
-            _context = context;
         }
 
         public IActionResult OnGet()
@@ -26,9 +23,6 @@ namespace WebRestApi.WebApp.Pages
             if(!ModelState.IsValid) {
                 return Page();
             }
-
-            _context.Customers.Add(Customer);
-            await _context.SaveChangesAsync();
 
             return RedirectToPage("./Index");
         }

@@ -1,10 +1,12 @@
 ﻿using System.IO;
 using System.Reflection;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 using WebRestApi.DataAccess;
 using WebRestApi.DataAccess.Repository;
 using WebRestApi.Logger;
@@ -21,8 +23,8 @@ namespace WebRestApi
         public Startup(IWebHostEnvironment env)
         {
             var builder = new ConfigurationBuilder()
-               .SetBasePath(env.ContentRootPath)
-               .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+                .SetBasePath(env.ContentRootPath)
+                .AddJsonFile("appsettings.json", optional : true, reloadOnChange : true);
 
             Configuration = builder.Build();
         }
@@ -31,8 +33,8 @@ namespace WebRestApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvcCore(options => options.EnableEndpointRouting = false)
-            .SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
-            .AddApiExplorer();
+                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
+                .AddApiExplorer();
             // services.AddDbContext<WebRestApiContext>(
             //     options => options.
             //     .(Configuration.GetConnectionString($"WebRestApi{Configuration.GetValue<string>("EnvironmentName","HomeEnv")}")));
@@ -45,9 +47,20 @@ namespace WebRestApi
             services.AddScoped<IDataService, DataService>();
             services.AddSwaggerGen();
 
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.RequireHttpsMetadata = false;
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey(),
+                        ValidateIssuerSigningKey = true
+                    };
+                });
 
             services.Configure<FileLoggerOptions>(Configuration.GetSection("Logger"));
-            services.ConfigureSwaggerGen(setup =>{
+            services.ConfigureSwaggerGen(setup =>
+            {
                 var basePath = System.AppDomain.CurrentDomain.BaseDirectory;
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(basePath, xmlFile);
@@ -68,7 +81,8 @@ namespace WebRestApi
 
             app.UseSwagger();
 
-            app.UseSwaggerUI(c => {
+            app.UseSwaggerUI(c =>
+            {
                 c.SwaggerEndpoint("swagger/v1/swagger.json", "Web Rest API v1");
                 c.RoutePrefix = string.Empty;
             });

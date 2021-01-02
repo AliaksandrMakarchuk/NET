@@ -10,21 +10,13 @@ namespace WebRestApi.WebApp.Pages
     {
         [BindProperty]
         public Customer Customer { get; set; }
-        private readonly CustomerDbContext _context;
 
-        public EditModel(CustomerDbContext context)
+        public EditModel()
         {
-            _context = context;
         }
 
         public IActionResult OnGet(int id)
         {
-            Customer = _context.Customers.SingleOrDefault(c => c.Id == id);
-
-            if(Customer == null){
-                return RedirectToPage("./Index");
-            }
-
             return Page();
         }
 
@@ -34,9 +26,6 @@ namespace WebRestApi.WebApp.Pages
             {
                 return Page();
             }
-
-            _context.Customers.Update(Customer);
-            await _context.SaveChangesAsync();
 
             return RedirectToPage("./Index");
         }

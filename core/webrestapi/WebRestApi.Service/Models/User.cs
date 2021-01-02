@@ -8,6 +8,9 @@ namespace WebRestApi.Service.Models
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
+        public string Email { get; set; }
+        public string Password { get; set; }
+        public string Role { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
 
@@ -22,16 +25,19 @@ namespace WebRestApi.Service.Models
         public bool Equals(User other)
         {
             return other != null &&
-                   Id == other.Id &&
-                   FirstName == other.FirstName &&
-                   LastName == other.LastName &&
-                   EqualityComparer<ICollection<Message>>.Default.Equals(SendMessages, other.SendMessages) &&
-                   EqualityComparer<ICollection<Message>>.Default.Equals(ReceivedMessages, other.ReceivedMessages);
+                Id == other.Id &&
+                Email == other.Email &&
+                Password == other.Password &&
+                Role == other.Role &&
+                FirstName == other.FirstName &&
+                LastName == other.LastName &&
+                EqualityComparer<ICollection<Message>>.Default.Equals(SendMessages, other.SendMessages) &&
+                EqualityComparer<ICollection<Message>>.Default.Equals(ReceivedMessages, other.ReceivedMessages);
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(Id, FirstName, LastName, SendMessages, ReceivedMessages);
+            return HashCode.Combine(Id, Email, Password, Role, FirstName, LastName, SendMessages, ReceivedMessages);
         }
 
         public static bool operator ==(User left, User right)

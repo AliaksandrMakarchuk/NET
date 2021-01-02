@@ -5,8 +5,7 @@ namespace WebRestApi.Service
 {
     public abstract class AbstractDbContext : DbContext
     {
-        public AbstractDbContext(DbContextOptions<AbstractDbContext> options)
-        : base(options) { }
+        public AbstractDbContext(DbContextOptions<AbstractDbContext> options) : base(options) { }
 
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<Message> Messages { get; set; }
