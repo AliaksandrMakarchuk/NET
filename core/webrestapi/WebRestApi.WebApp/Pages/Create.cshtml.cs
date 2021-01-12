@@ -7,9 +7,7 @@ namespace WebRestApi.WebApp.Pages
 {
     public class CreateModel : PageModel
     {
-        public CreateModel()
-        {
-        }
+        public CreateModel() { }
 
         public IActionResult OnGet()
         {
@@ -19,9 +17,15 @@ namespace WebRestApi.WebApp.Pages
         [BindProperty]
         public Customer Customer { get; set; }
 
-        public async Task<IActionResult> OnPostAsync(){
-            if(!ModelState.IsValid) {
-                return Page();
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public async Task<IActionResult> OnPostAsync()
+        {
+            if (!ModelState.IsValid)
+            {
+                return await Task.FromResult(Page());
             }
 
             return RedirectToPage("./Index");
