@@ -15,8 +15,6 @@ namespace SocketServer
     {
         private byte[] _buffer = new byte[1024];
 
-        private ClientManager _clientManager = new ClientManager();
-
         static async Task Main(string[] args)
         {
             Console.WriteLine("=== Server v1.0 ===");
@@ -33,15 +31,15 @@ namespace SocketServer
 
                 await new TaskFactory().StartNew(async(clientSocket) =>
                 {
-                    await new Program().WorkWithSocket(clientSocket as Socket);
+                    await WorkWithSocket(clientSocket as Socket);
                 }, acceptedSocket);
             }
         }
 
-        private async Task WorkWithSocket(Socket socket)
+        private static async Task WorkWithSocket(Socket socket)
         {
             Console.WriteLine("New client");
-            var clientId = _clientManager.AddClient();
+            var clientId = ClientManager.Instance.AddClient();
             Console.WriteLine($"DEBUG. ClientId: {clientId}");
 
             var buffer = Encoding.UTF32.GetBytes($"Ping: {clientId}");
@@ -57,7 +55,7 @@ namespace SocketServer
             res = socket.BeginReceive(_buffer, 0, 1024, SocketFlags.None, ReceiveCallback, new StateObject{WorkSocket = socket});
             while (!res.AsyncWaitHandle.WaitOne()) { await Task.Delay(1000); }
 
-            if (!_clientManager.IsConnected(clientId))
+            if (!ClientManager.Instance.IsConnected(clientId))
             {
                 Console.WriteLine("Connection refused");
             }
@@ -93,7 +91,7 @@ namespace SocketServer
                 Guid guid;
                 if (!Guid.TryParse(stringGuid, out guid)) { return; }
                 var nick = match.Groups[3].Value;
-                _clientManager.SetClientNick(guid, nick);
+                ClientManager.Instance.SetClientNick(guid, nick);
             }
             else
             {
