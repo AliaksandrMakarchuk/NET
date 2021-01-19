@@ -12,8 +12,7 @@ namespace WebRestApi.WebApp.Pages
         public Customer Customer { get; set; }
 
         public EditModel()
-        {
-        }
+        { }
 
         public IActionResult OnGet(int id)
         {
@@ -24,7 +23,7 @@ namespace WebRestApi.WebApp.Pages
         {
             if (!ModelState.IsValid)
             {
-                return Page();
+                return await Task.FromResult(Page());
             }
 
             return RedirectToPage("./Index");

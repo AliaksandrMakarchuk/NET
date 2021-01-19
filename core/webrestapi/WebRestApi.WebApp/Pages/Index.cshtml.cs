@@ -28,7 +28,7 @@ namespace WebRestApi.WebApp.Pages
 
         public async Task<IActionResult> OnPostDeleteAsync(int id)
         {
-            return RedirectToPage();
+            return await Task.FromResult(RedirectToPage());
         }
     }
 }
