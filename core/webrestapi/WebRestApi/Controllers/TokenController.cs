@@ -12,6 +12,11 @@ using WebRestApi.Service.Models;
 
 namespace WebRestApi.Controllers
 {
+    public class Creds
+    {
+        public string Login { get; set; }
+        public string Password { get; set; }
+    }
     /// <summary>
     /// 
     /// </summary>
@@ -20,7 +25,7 @@ namespace WebRestApi.Controllers
     public class TokenController : ControllerBase
     {
         private readonly AbstractDbContext _dbContext;
-        
+
         /// <summary>
         /// 
         /// </summary>
@@ -40,9 +45,10 @@ namespace WebRestApi.Controllers
         /// <response code="401">If user input invalid login and/or password</response>
         /// <response code="500">If something wrong had happen during token generation</response>
         [HttpPost]
-        public async Task<IActionResult> Token(string login, string password)
+        public async Task<IActionResult> Token([FromBody]Creds credentials)
         {
             JsonResult result = null;
+            var (login, password) = (credentials.Login, credentials.Password);
 
             try
             {

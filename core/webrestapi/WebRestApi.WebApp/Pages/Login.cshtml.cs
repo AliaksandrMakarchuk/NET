@@ -14,14 +14,17 @@ namespace WebRestApi.WebApp.Pages
     {
         private string _from;
         private readonly UserContext _userContext;
+        private readonly NetworkManager _networkManager;
 
         [BindProperty]
         public Credentials Credentials { get; set; }
 
         public LoginModel(
-            UserContext userContext)
+            UserContext userContext,
+            NetworkManager networkManager)
         {
             _userContext = userContext;
+            this._networkManager = networkManager;
         }
 
         public IActionResult OnGet(string from)
@@ -33,6 +36,7 @@ namespace WebRestApi.WebApp.Pages
         public async Task<IActionResult> OnPostAsync()
         {
             // var result = await _networkManager.SendRequest(Credentials);
+            var res = await _networkManager.Login(Credentials.Email, Credentials.Password);
             var user = await _userContext.Users.FirstOrDefaultAsync(x => x.Email == Credentials.Email && x.Password == Credentials.Password);
             if (user != null)
             {

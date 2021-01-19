@@ -21,7 +21,9 @@ namespace WebRestApi.WebApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<NetworkConfigurationOptions>(Configuration.GetSection(NetworkConfigurationOptions.NetworkConfiguration));
             services.AddDbContext<UserContext>(options => options.UseInMemoryDatabase("users"));
+            services.AddTransient<NetworkManager>();
 
             // установка конфигурации подключения
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
