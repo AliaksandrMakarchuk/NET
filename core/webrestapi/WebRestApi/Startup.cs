@@ -35,12 +35,9 @@ namespace WebRestApi
             services.AddMvcCore(options => options.EnableEndpointRouting = false)
                 .SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
                 .AddApiExplorer();
-            // services.AddDbContext<WebRestApiContext>(
-            //     options => options.
-            //     .(Configuration.GetConnectionString($"WebRestApi{Configuration.GetValue<string>("EnvironmentName","HomeEnv")}")));
-            services.AddScoped<AbstractDbContext, WebRestApiContext>();
+                
+            services.AddSingleton<AbstractDbContext, WebRestApiContext>();
             services.AddDbContext<AbstractDbContext>();
-            // services.AddScoped<AbstractDbContext, WebRestApiContext>();
             services.AddScoped<UserRepositoryBase, UserRepository>();
             services.AddScoped<MessageRepositoryBase, MessageRepository>();
             services.AddScoped<CommentRepositoryBase, CommentRepository>();

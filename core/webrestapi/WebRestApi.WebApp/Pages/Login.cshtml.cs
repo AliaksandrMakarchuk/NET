@@ -17,7 +17,7 @@ namespace WebRestApi.WebApp.Pages
         private readonly NetworkManager _networkManager;
 
         [BindProperty]
-        public Credentials Credentials { get; set; }
+        public Models.Credentials Credentials { get; set; }
 
         public LoginModel(
             UserContext userContext,

@@ -9,14 +9,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using WebRestApi.Service;
 using WebRestApi.Service.Models;
+using WebRestApi.Models;
 
 namespace WebRestApi.Controllers
 {
-    public class Creds
-    {
-        public string Login { get; set; }
-        public string Password { get; set; }
-    }
     /// <summary>
     /// 
     /// </summary>
@@ -38,15 +34,15 @@ namespace WebRestApi.Controllers
         /// <summary>
         /// Receive JWT token by login and password
         /// </summary>
-        /// <param name="login"></param>
-        /// <param name="password"></param>
+        /// <param name="credentials">User login and password</param>
         /// <returns>JWT token</returns>
         /// <response code="200">If operation has been completed without any exception</response>
         /// <response code="401">If user input invalid login and/or password</response>
         /// <response code="500">If something wrong had happen during token generation</response>
         [HttpPost]
-        public async Task<IActionResult> Token([FromBody]Creds credentials)
+        public async Task<IActionResult> Token([FromBody]Credentials credentials)
         {
+            var isValid = ModelState.IsValid;
             JsonResult result = null;
             var (login, password) = (credentials.Login, credentials.Password);
 
