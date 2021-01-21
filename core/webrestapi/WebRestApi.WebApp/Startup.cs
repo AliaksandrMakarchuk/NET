@@ -22,8 +22,8 @@ namespace WebRestApi.WebApp
         public void ConfigureServices(IServiceCollection services)
         {
             services.Configure<NetworkConfigurationOptions>(Configuration.GetSection(NetworkConfigurationOptions.NetworkConfiguration));
-            services.AddDbContext<UserContext>(options => options.UseInMemoryDatabase("users"));
-            services.AddTransient<NetworkManager>();
+            // services.AddDbContext<UserContext>(options => options.UseInMemoryDatabase("users"));
+            services.AddSingleton<NetworkManager>();
 
             // установка конфигурации подключения
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)

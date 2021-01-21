@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
-using WebRestApi.WebApp.Models;
+using WebRestApi.WebApp.ViewModels;
 
 namespace WebRestApi.WebApp.Pages {
     public class LogoutModel : PageModel {

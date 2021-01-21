@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace WebRestApi.WebApp.Models
+namespace WebRestApi.WebApp.ViewModels
 {
     public class Credentials
     {

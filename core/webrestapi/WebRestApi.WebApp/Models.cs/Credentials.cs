@@ -1,4 +1,4 @@
-namespace WebRestApi.WebApp
+namespace WebRestApi.WebApp.Models
 {
     public class Credentials
     {

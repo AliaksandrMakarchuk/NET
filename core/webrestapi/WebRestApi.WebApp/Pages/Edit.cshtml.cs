@@ -2,7 +2,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using WebRestApi.WebApp.Models;
+using WebRestApi.WebApp.ViewModels;
 
 namespace WebRestApi.WebApp.Pages
 {

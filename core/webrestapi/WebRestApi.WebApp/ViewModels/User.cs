@@ -1,4 +1,4 @@
-namespace WebRestApi.WebApp.Models
+namespace WebRestApi.WebApp.ViewModels
 {
     public class User
     {
