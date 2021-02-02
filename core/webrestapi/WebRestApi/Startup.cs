@@ -10,6 +10,7 @@ using Microsoft.IdentityModel.Tokens;
 using WebRestApi.DataAccess;
 using WebRestApi.DataAccess.Repository;
 using WebRestApi.Logger;
+using WebRestApi.Models;
 using WebRestApi.Service;
 using WebRestApi.Service.Repository;
 
