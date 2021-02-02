@@ -48,7 +48,7 @@ namespace WebRestApi.WebApp.Pages
             //     return RedirectToPage("/Index");
             // }
 
-            return RedirectToPage("/Login");
+            return await Task.FromResult(RedirectToPage("/Login"));
         }
     }
 
