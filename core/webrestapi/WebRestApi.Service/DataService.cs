@@ -17,7 +17,7 @@ namespace WebRestApi.Service
             UserRepositoryBase userRepository,
             MessageRepositoryBase messageRepository,
             CommentRepositoryBase commentRepository
-            )
+        )
         {
             _userRepository = userRepository;
             _messageRepository = messageRepository;
@@ -29,17 +29,17 @@ namespace WebRestApi.Service
             return await _userRepository.GetAllAsync();
         }
 
-        public async Task<User> GetUserById(int id)
+        public async Task<User> GetUserByIdAsync(int id)
         {
             return await _userRepository.GetByIdAsync(id);
         }
 
-        public async Task<IEnumerable<User>> GetUsersByName(string userName)
+        public async Task<IEnumerable<User>> GetUsersByNameAsync(string userName)
         {
             return await _userRepository.GetByNameAsync(userName);
         }
 
-        public async Task<User> UpdateUser(ClientUser user)
+        public async Task<User> UpdateUserAsync(ClientUser user)
         {
             try
             {
@@ -53,8 +53,8 @@ namespace WebRestApi.Service
                 return await _userRepository.UpdateAsync(new User
                 {
                     Id = user.Id,
-                    FirstName = user.FirstName,
-                    LastName = user.LastName
+                        FirstName = user.FirstName,
+                        LastName = user.LastName
                 });
             }
             catch (Exception ex)
@@ -65,7 +65,7 @@ namespace WebRestApi.Service
 
         }
 
-        public async Task<User> DeleteUser(int id)
+        public async Task<User> DeleteUserAsync(int id)
         {
             var user = await _userRepository.GetByIdAsync(id);
 
@@ -77,13 +77,44 @@ namespace WebRestApi.Service
             return await _userRepository.DeleteAsync(user);
         }
 
-        public async Task<User> CreateNewUser(ClientUser user)
+        public async Task<User> CreateNewUserAsync(ClientUser user)
         {
             return await _userRepository.AddAsync(new User
             {
                 FirstName = user.FirstName,
-                LastName = user.LastName
+                    LastName = user.LastName
             });
+        }
+
+        public async Task<IEnumerable<Message>> GetAllMessagesAsync()
+        {
+            return await _messageRepository.GetAllAsync();
+        }
+
+        public async Task<bool> SendMessageAsync(ClientMessage message)
+        {
+            var msg = await _messageRepository.AddAsync(new Message
+            {
+                SenderId = message.FromId,
+                    Sender = await _userRepository.GetByIdAsync(message.FromId),
+                    ReceiverId = message.ToId,
+                    Receiver = await _userRepository.GetByIdAsync(message.ToId),
+                    Text = message.Message
+            });
+
+            return msg != null;
+        }
+
+        public async Task<Message> DeleteMessageAsync(int id)
+        {
+            var message = await _messageRepository.GetByIdAsync(id);
+
+            if (message == null)
+            {
+                return null;
+            }
+
+            return await _messageRepository.DeleteAsync(message);
         }
     }
 }

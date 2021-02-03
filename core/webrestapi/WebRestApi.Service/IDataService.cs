@@ -9,14 +9,20 @@ namespace WebRestApi.Service
     {
         Task<IEnumerable<User>> GetAllUsers();
 
-        Task<IEnumerable<User>> GetUsersByName(string userName);
+        Task<IEnumerable<User>> GetUsersByNameAsync(string userName);
 
-        Task<User> GetUserById(int id);
+        Task<User> GetUserByIdAsync(int id);
 
-        Task<User> DeleteUser(int id);
+        Task<User> DeleteUserAsync(int id);
 
-        Task<User> UpdateUser(ClientUser user);
+        Task<User> UpdateUserAsync(ClientUser user);
 
-        Task<User> CreateNewUser(ClientUser user);
+        Task<User> CreateNewUserAsync(ClientUser user);
+
+        Task<IEnumerable<Message>> GetAllMessagesAsync();
+
+        Task<bool> SendMessageAsync(ClientMessage message);
+
+        Task<Message> DeleteMessageAsync(int id);
     }
 }

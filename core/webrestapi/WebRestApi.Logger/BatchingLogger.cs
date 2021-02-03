@@ -9,10 +9,10 @@ namespace WebRestApi.Logger
         private readonly BatchingLoggerProvider _provider;
         private readonly string _category;
 
-        public BatchingLogger(BatchingLoggerProvider loggerProvider, string categoryName)
+        public BatchingLogger()
         {
-            _provider = loggerProvider;
-            _category = categoryName;
+            _provider = null;
+            _category = null;
         }
 
         public IDisposable BeginScope<TState>(TState state)
@@ -38,7 +38,7 @@ namespace WebRestApi.Logger
             builder.Append(" [");
             builder.Append(logLevel.ToString());
             builder.Append("] ");
-            builder.Append(_category);
+            // builder.Append(_category);
             builder.Append(": ");
             builder.AppendLine(formatter(state, exception));
 
@@ -47,7 +47,7 @@ namespace WebRestApi.Logger
                 builder.AppendLine(exception.ToString());
             }
 
-            _provider.AddMessage(timestamp, builder.ToString());
+            // _provider.AddMessage(timestamp, builder.ToString());
         }
 
         public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)

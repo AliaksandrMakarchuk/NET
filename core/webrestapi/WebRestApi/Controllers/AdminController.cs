@@ -46,7 +46,7 @@ namespace WebRestApi.Controllers
 
             try
             {
-                var newUser = await _dataService.CreateNewUser(user);
+                var newUser = await _dataService.CreateNewUserAsync(user);
                 return Created("here", newUser);
             }
             catch (Exception ex)
@@ -86,7 +86,7 @@ namespace WebRestApi.Controllers
                 // var updatedUser = await _dataService.UpdateUser(existingUser);
                 // return Ok(updatedUser);
 
-                var updatedUser = await _dataService.UpdateUser(user);
+                var updatedUser = await _dataService.UpdateUserAsync(user);
 
                 if(updatedUser == null){
                     return BadRequest(new ErrorResponse { Message = "User with specified identifier could not be found" });
@@ -111,14 +111,13 @@ namespace WebRestApi.Controllers
         [HttpDelete]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public IActionResult Delete([FromBody] int id)
+        public async Task<IActionResult> Delete([FromBody] int id)
         {
             _logger.LogInformation(LoggingEvents.DeleteUser, $"Delete User with Id {id}");
 
             try
             {
-                _dataService.DeleteUser(id);
-                //_userRepository.Delete(id);
+                await _dataService.DeleteUserAsync(id);
             }
             catch (Exception ex)
             {

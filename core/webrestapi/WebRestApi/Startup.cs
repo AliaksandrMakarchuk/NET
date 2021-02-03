@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using WebRestApi.DataAccess;
 using WebRestApi.DataAccess.Repository;
@@ -36,13 +37,17 @@ namespace WebRestApi
             services.AddMvcCore(options => options.EnableEndpointRouting = false)
                 .SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
                 .AddApiExplorer();
-                
-            services.AddSingleton<AbstractDbContext, WebRestApiContext>();
+
+            services.Configure<FileLoggerOptions>(Configuration.GetSection("Logger"));
+            services.AddSingleton<BatchingLoggerProvider, FileLoggerProvider>();
+            services.AddSingleton<ILogger, BatchingLogger>();
+            services.AddScoped<AbstractDbContext, WebRestApiContext>();
             services.AddDbContext<AbstractDbContext>();
             services.AddScoped<UserRepositoryBase, UserRepository>();
             services.AddScoped<MessageRepositoryBase, MessageRepository>();
             services.AddScoped<CommentRepositoryBase, CommentRepository>();
             services.AddScoped<IDataService, DataService>();
+
             services.AddSwaggerGen();
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

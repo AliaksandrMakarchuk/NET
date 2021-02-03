@@ -56,12 +56,13 @@ namespace WebRestApi.Logger
 
         public ILogger CreateLogger(string categoryName)
         {
-            throw new NotImplementedException();
+            // throw new NotImplementedException();
+            return new BatchingLogger();
         }
 
         public void Dispose()
         {
-            throw new NotImplementedException();
+            // throw new NotImplementedException();
         }
     }
 }

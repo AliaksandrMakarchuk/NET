@@ -67,7 +67,7 @@ namespace WebRestApi.Controllers
 
             try
             {
-                var user = await _dataService.GetUserById(id);
+                var user = await _dataService.GetUserByIdAsync(id);
                 return Ok(user);
             }
             catch (Exception)

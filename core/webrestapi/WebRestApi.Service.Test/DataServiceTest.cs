@@ -72,7 +72,7 @@ namespace WebRestApi.Service.Tests
         {
             _userRepositoryMock.Setup(x => x.GetByIdAsync(It.IsAny<int>())).Returns<int>((id) => Task.FromResult(_users.SingleOrDefault(x => x.Id == id)));
 
-            var user = await _dataService.GetUserById(1);
+            var user = await _dataService.GetUserByIdAsync(1);
 
             Assert.IsNotNull(user);
             Assert.AreEqual(_users[0], user);
@@ -83,7 +83,7 @@ namespace WebRestApi.Service.Tests
         {
             _userRepositoryMock.Setup(x => x.GetByIdAsync(It.IsAny<int>())).Returns<int>((id) => Task.FromResult(_users.SingleOrDefault(x => x.Id == id)));
 
-            var user = await _dataService.GetUserById(3);
+            var user = await _dataService.GetUserByIdAsync(3);
 
             Assert.IsNull(user);
         }
@@ -95,7 +95,7 @@ namespace WebRestApi.Service.Tests
                 .Returns<string>((userName) => Task.FromResult(_users.Where(x => x.FirstName.Contains(userName) ||
                 x.LastName.Contains(userName) || userName.Contains(x.FirstName) || userName.Contains(x.LastName))));
 
-            var users = await _dataService.GetUsersByName("First");
+            var users = await _dataService.GetUsersByNameAsync("First");
 
             Assert.AreEqual(1, users.Count());
             Assert.AreEqual(_users[0], users.First());
@@ -107,7 +107,7 @@ namespace WebRestApi.Service.Tests
             User user = null;
             _userRepositoryMock.Setup(x => x.AddAsync(It.IsAny<User>())).Callback<User>(x => user = x);
 
-            await _dataService.CreateNewUser(new Models.Client.ClientUser() { FirstName = "fn", LastName = "ln"});
+            await _dataService.CreateNewUserAsync(new Models.Client.ClientUser() { FirstName = "fn", LastName = "ln"});
 
             _userRepositoryMock.Verify(x => x.AddAsync(It.IsAny<User>()));
             Assert.IsNotNull(user);
@@ -122,7 +122,7 @@ namespace WebRestApi.Service.Tests
             _userRepositoryMock.Setup(x => x.GetByIdAsync(It.Is<int>(id => id == 1))).Returns<int>(id => Task.FromResult(user));
             _userRepositoryMock.Setup(x => x.UpdateAsync(It.IsAny<User>())).Returns<User>(u => Task.FromResult(u));
 
-            var updatedUser = await _dataService.UpdateUser(new Models.Client.ClientUser() {
+            var updatedUser = await _dataService.UpdateUserAsync(new Models.Client.ClientUser() {
                 Id = user.Id,
                 FirstName = user.FirstName,
                 LastName = user.LastName
