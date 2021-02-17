@@ -31,21 +31,32 @@ namespace WebRestApi.Controllers
         }
 
         /// <summary>
-        /// 
+        /// Get collection of messages in db
         /// </summary>
-        /// <returns></returns>
+        /// <returns>All existing messages</returns>
+        /// <response code="200">If operation has been completed without any exception</response>
+        /// <response code="500">If something wrong had happen during getting users</response>
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var messages = await _dataService.GetAllMessagesAsync();
-            return Ok(messages);
+            try
+            {
+                var messages = await _dataService.GetAllMessagesAsync();
+                return Ok(messages);
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new ErrorResponse { Message = "Something went wrong" });
+            }
         }
 
         /// <summary>
-        /// Send message
+        /// Send a message
         /// </summary>
         /// <param name="message"></param>
-        /// <returns></returns>
+        /// <response code="200">If operation has been completed without any exception</response>
+        /// <response code="400">If a sender or receiver could not be found</response>
+        /// <response code="500">If something wrong had happen during getting users</response>
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -60,24 +71,26 @@ namespace WebRestApi.Controllers
                 return BadRequest(new ErrorResponse { Message = $"Should specify both From and To Ids" });
             }
 
-            // try
-            // {
-            var result = await _dataService.SendMessageAsync(message);
-            return Ok();
-            // }
-            // catch (Exception ex)
-            // {
-            //     _logger.LogError(LoggingEvents.ErrorOnSavingChanges, $"Error on sending new message.{Environment.NewLine}Exception message: {ex.Message}{Environment.NewLine}Exception StackTrace: {ex.StackTrace}");
-            //     var error = new ErrorResponse { Message = "Error has accured on sending message" };
-            //     return StatusCode(StatusCodes.Status500InternalServerError, error);
-            // }
+            try
+            {
+                var result = await _dataService.SendMessageAsync(message);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(LoggingEvents.ErrorOnSavingChanges, $"Error on sending new message.{Environment.NewLine}Exception message: {ex.Message}{Environment.NewLine}Exception StackTrace: {ex.StackTrace}");
+                var error = new ErrorResponse { Message = "Error has accured on sending message" };
+                return StatusCode(StatusCodes.Status500InternalServerError, error);
+            }
         }
 
         /// <summary>
-        /// 
+        /// Remove a message by Id
         /// </summary>
         /// <param name="id"></param>
-        /// <returns></returns>
+        /// <response code="200">Message has been successfully removed</response>
+        /// <response code="400">Message with the specified Id could not be found</response>
+        /// <response code="500">Something went wrong</response>
         [HttpDelete]
         public async Task<IActionResult> Delete([FromBody] int id)
         {
@@ -85,15 +98,20 @@ namespace WebRestApi.Controllers
 
             try
             {
-                await _dataService.DeleteMessageAsync(id);
+                var message = await _dataService.DeleteMessageAsync(id);
+                if (message == null)
+                {
+                    return BadRequest(new ErrorResponse { Message = $"Message with with the Id = {id} could not be found" });
+                }
+
+                return Ok();
             }
             catch (Exception ex)
             {
                 _logger.LogError(LoggingEvents.ErrorOnDeletingUser, $"Error on deleting Message with Id {id}.{Environment.NewLine}Exception message: {ex.Message}{Environment.NewLine}Exception StackTrace: {ex.StackTrace}");
-                return BadRequest(new ErrorResponse { Message = "Error on removing specified Message" });
+                var error = new ErrorResponse { Message = "Error has accured on removing message" };
+                return StatusCode(StatusCodes.Status500InternalServerError, error);
             }
-
-            return Ok();
         }
     }
 }
