@@ -2,15 +2,15 @@
 using Microsoft.AspNetCore.Http;
 using System;
 using Microsoft.Extensions.Logging;
-using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 using WebRestApi.Service;
 using WebRestApi.Service.Models;
-using WebRestApi.Service.Models.Client;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebRestApi.Controllers
 {
     ///
+    [Authorize(Roles = "user")]
     [Route("api/[controller]")]
     [ApiController]
     public class UsersController : ControllerBase

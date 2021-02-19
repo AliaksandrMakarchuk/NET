@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,15 +11,19 @@ using WebRestApi.Service.Models.Client;
 
 namespace WebRestApi.Controllers
 {
-    ///
+    ///    
+    // [Authorize(AuthenticationSchemes = "Bearer")]
+    [Authorize(Roles = "admin")]
     [Route("api/[controller]")]
     [ApiController]
-    public class AdminController : ControllerBase {
+    public class AdminController : ControllerBase
+    {
         private ILogger _logger;
         private IDataService _dataService;
 
         ///
-        public AdminController(ILogger logger, IDataService dataService) {
+        public AdminController(ILogger logger, IDataService dataService)
+        {
             _logger = logger;
             _dataService = dataService;
         }
@@ -88,7 +93,8 @@ namespace WebRestApi.Controllers
 
                 var updatedUser = await _dataService.UpdateUserAsync(user);
 
-                if(updatedUser == null){
+                if (updatedUser == null)
+                {
                     return BadRequest(new ErrorResponse { Message = "User with specified identifier could not be found" });
                 }
 

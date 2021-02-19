@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Reflection;
+using System.Text.Json;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -35,6 +36,8 @@ namespace WebRestApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvcCore(options => options.EnableEndpointRouting = false)
+                .AddAuthorization() // Note - this is on the IMvcBuilder, not the service collection
+                .AddJsonOptions(options => options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase)
                 .SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
                 .AddApiExplorer();
 
@@ -56,10 +59,25 @@ namespace WebRestApi
                     options.RequireHttpsMetadata = false;
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
+                        // укзывает, будет ли валидироваться издатель при валидации токена
+                        ValidateIssuer = true,
+                        // строка, представляющая издателя
+                        ValidIssuer = AuthOptions.ISSUER,
+
+                        // будет ли валидироваться потребитель токена
+                        ValidateAudience = true,
+                        // установка потребителя токена
+                        ValidAudience = AuthOptions.AUDIENCE,
+                        // будет ли валидироваться время существования
+                        ValidateLifetime = true,
+
+                        // установка ключа безопасности
                         IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey(),
-                        ValidateIssuerSigningKey = true
+                        // валидация ключа безопасности
+                        ValidateIssuerSigningKey = true,
                     };
                 });
+            services.AddAuthorization();
 
             services.Configure<FileLoggerOptions>(Configuration.GetSection("Logger"));
             services.ConfigureSwaggerGen(setup =>
@@ -81,6 +99,9 @@ namespace WebRestApi
             // }
 
             app.UseStaticFiles();
+
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseSwagger();
 

@@ -31,7 +31,7 @@ namespace WebRestApi.Controllers
         }
 
         /// <summary>
-        /// Get collection of messages in db
+        /// Get all messages from db
         /// </summary>
         /// <returns>All existing messages</returns>
         /// <response code="200">If operation has been completed without any exception</response>
@@ -68,12 +68,16 @@ namespace WebRestApi.Controllers
 
             if (userFrom == null || userTo == null)
             {
-                return BadRequest(new ErrorResponse { Message = $"Should specify both From and To Ids" });
+                return BadRequest(new ErrorResponse { Message = "Should specify correct id for both sender and receiver" });
             }
 
             try
             {
                 var result = await _dataService.SendMessageAsync(message);
+                if (!result)
+                {
+                    return BadRequest(new ErrorResponse { Message = "Message could not be sent" });
+                }
                 return Ok();
             }
             catch (Exception ex)

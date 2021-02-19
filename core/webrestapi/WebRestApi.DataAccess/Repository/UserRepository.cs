@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using WebRestApi.Service;
 using WebRestApi.Service.Models;
 using WebRestApi.Service.Repository;
-using Microsoft.EntityFrameworkCore;
 
 namespace WebRestApi.DataAccess.Repository
 {
@@ -15,8 +15,7 @@ namespace WebRestApi.DataAccess.Repository
         {
             string query = $"SELECT * FROM Users WHERE UPPER(FirstName) LIKE '%{userName}%' or UPPER(LastName) LIKE '%{userName}%'";
             return await Context.Users.FromSqlRaw(query).ToListAsync();
-            // return await Task.FromResult<IEnumerable<User>>(new List<User>());
-            }
+        }
 
         public override async Task<User> AddAsync(User user)
         {
@@ -38,7 +37,7 @@ namespace WebRestApi.DataAccess.Repository
 
         public override async Task<User> UpdateAsync(User user)
         {
-            if(user == null)
+            if (user == null)
             {
                 return null;
             }
@@ -61,7 +60,7 @@ namespace WebRestApi.DataAccess.Repository
 
         public override async Task<User> DeleteAsync(User user)
         {
-            if(user == null)
+            if (user == null)
             {
                 return null;
             }

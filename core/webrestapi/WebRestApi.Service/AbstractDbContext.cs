@@ -30,9 +30,10 @@ namespace WebRestApi.Service
             Role adminRole = new Role { Id = 1, Name = adminRoleName };
             Role userRole = new Role { Id = 2, Name = userRoleName };
             User adminUser = new User { Id = 1, Email = adminEmail, Password = adminPassword, RoleId = adminRole.Id };
+            User generalUser = new User { Id = 2, Email = "user@mail.ru", Password = "12345", RoleId = userRole.Id };
 
             modelBuilder.Entity<Role>().HasData(new Role[] { adminRole, userRole });
-            modelBuilder.Entity<User>().HasData(new User[] { adminUser });
+            modelBuilder.Entity<User>().HasData(new User[] { adminUser, generalUser });
 
             base.OnModelCreating(modelBuilder);
         }

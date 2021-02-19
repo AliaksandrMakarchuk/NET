@@ -8,6 +8,7 @@ namespace WebRestApi.DataAccess
     {
         public WebRestApiContext(DbContextOptions<AbstractDbContext> options) : base(options)
         {
+            Database.EnsureDeleted();
             Database.EnsureCreated();
         }
 

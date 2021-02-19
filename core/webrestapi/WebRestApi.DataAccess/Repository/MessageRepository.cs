@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using WebRestApi.Service;
@@ -20,9 +19,15 @@ namespace WebRestApi.DataAccess.Repository
             return newMessage.Entity;
         }
 
-        public override Task<Message> DeleteAsync(Message message)
+        public override async Task<Message> DeleteAsync(Message message)
         {
-            throw new NotImplementedException();
+            if (message != null)
+            {
+                Context.Messages.Remove(message);
+                await Context.SaveChangesAsync();
+            }
+
+            return message;
         }
 
         public override async Task<IEnumerable<Message>> GetAllAsync()
@@ -30,14 +35,22 @@ namespace WebRestApi.DataAccess.Repository
             return await Context.Messages.ToListAsync();
         }
 
-        public override Task<Message> GetByIdAsync(int id)
+        public override async Task<Message> GetByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            return await Context.Messages.FindAsync(id);
         }
 
-        public override Task<Message> UpdateAsync(Message model)
+        public override async Task<Message> UpdateAsync(Message message)
         {
-            throw new NotImplementedException();
+            if (message == null)
+            {
+                return null;
+            }
+
+            Context.Messages.Update(message);
+            await Context.SaveChangesAsync();
+
+            return message;
         }
     }
 }
