@@ -1,0 +1,37 @@
+﻿@page
+@model WebRestApi.WebApp.Pages.IndexModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Hello, @Model.Name </h1>
+<h1>Contacts home page</h1>
+<form method="post">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var contact in Model.Customers)
+            {
+                <tr>
+                    <td> @contact.Id </td>
+                    <td>@contact.Name</td>
+                    <td>
+                        <a asp-page="Edit" asp-route-id="@contact.Id">Edit</a> |
+                        <button type="submit" asp-page-handler="delete" asp-route-id="@contact.Id">delete
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <a asp-page="./Create">Create New</a>
+    <br>
+    <a asp-page="./CreateMovie">Create Movie</a>
+</form>

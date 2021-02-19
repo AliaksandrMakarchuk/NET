@@ -1,0 +1,40 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <EnableDefaultContentItems>false</EnableDefaultContentItems>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.2.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="5.0.1" />
+  </ItemGroup>
+
+  <!-- copy static files to output directory -->
+  <ItemGroup>
+    <Content Include="wwwroot\**" Link="wwwroot\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Pages\Error.cshtml" />
+    <Content Include="Pages\Index.cshtml" />
+    <Content Include="Pages\Edit.cshtml" />
+    <Content Include="Pages\Create.cshtml" />
+    <Content Include="Pages\CreateMovie.cshtml" />
+    <Content Include="Pages\Login.cshtml" />
+    <Content Include="Pages\Register.cshtml" />
+    <Content Include="Pages\Privacy.cshtml" />
+    <Content Include="Pages\Shared\_Layout.cshtml" />
+    <Content Include="Pages\Shared\_ValidationScriptsPartial.cshtml" />
+    <Content Include="Pages\_ViewImports.cshtml" />
+    <Content Include="Pages\_ViewStart.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>
