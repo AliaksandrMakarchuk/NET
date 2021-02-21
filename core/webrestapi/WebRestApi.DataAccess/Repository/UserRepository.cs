@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using WebRestApi.Service;
@@ -19,6 +20,9 @@ namespace WebRestApi.DataAccess.Repository
 
         public override async Task<User> AddAsync(User user)
         {
+            var roles = await Context.Roles.ToListAsync();
+            user.RoleId = roles.Single(x => x.Name == "user").Id;
+            
             var newUser = await Context.Users.AddAsync(user);
             await Context.SaveChangesAsync();
 

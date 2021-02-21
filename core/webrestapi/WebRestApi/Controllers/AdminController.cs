@@ -113,6 +113,7 @@ namespace WebRestApi.Controllers
         /// <param name="id">User Id</param>
         /// <remarks></remarks>
         /// <response code="200">If User has heen successfully deleted</response>
+        /// <response code="400">If could not find User by id</response>
         /// <response code="500">If something went wrong during removing the User</response>
         [HttpDelete]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -123,15 +124,18 @@ namespace WebRestApi.Controllers
 
             try
             {
-                await _dataService.DeleteUserAsync(id);
+                var user = await _dataService.DeleteUserAsync(id);
+                if (user == null)
+                {
+                    return BadRequest(new ErrorResponse { Message = $"Could not find a user by id: {id}" });
+                }
+                return Ok();
             }
             catch (Exception ex)
             {
                 _logger.LogError(LoggingEvents.ErrorOnDeletingUser, $"Error on deleting User with Id {id}.{Environment.NewLine}Exception message: {ex.Message}{Environment.NewLine}Exception StackTrace: {ex.StackTrace}");
-                return BadRequest(new ErrorResponse { Message = "Error on removing specified User" });
+                return StatusCode(StatusCodes.Status500InternalServerError, new ErrorResponse { Message = "Error on removing specified User" });
             }
-
-            return Ok();
         }
     }
 }

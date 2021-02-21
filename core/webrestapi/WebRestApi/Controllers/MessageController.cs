@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -36,6 +37,7 @@ namespace WebRestApi.Controllers
         /// <returns>All existing messages</returns>
         /// <response code="200">If operation has been completed without any exception</response>
         /// <response code="500">If something wrong had happen during getting users</response>
+        [Authorize(Roles = "admin")]
         [HttpGet]
         public async Task<IActionResult> Get()
         {
@@ -57,6 +59,7 @@ namespace WebRestApi.Controllers
         /// <response code="200">If operation has been completed without any exception</response>
         /// <response code="400">If a sender or receiver could not be found</response>
         /// <response code="500">If something wrong had happen during getting users</response>
+        [Authorize]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -95,6 +98,7 @@ namespace WebRestApi.Controllers
         /// <response code="200">Message has been successfully removed</response>
         /// <response code="400">Message with the specified Id could not be found</response>
         /// <response code="500">Something went wrong</response>
+        [Authorize]
         [HttpDelete]
         public async Task<IActionResult> Delete([FromBody] int id)
         {

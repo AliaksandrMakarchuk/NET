@@ -10,12 +10,14 @@ using Microsoft.IdentityModel.Tokens;
 using WebRestApi.Service;
 using WebRestApi.Service.Models;
 using WebRestApi.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebRestApi.Controllers
 {
     /// <summary>
     /// 
     /// </summary>
+    [AllowAnonymous]
     [Route("api/[controller]")]
     [ApiController]
     public class TokenController : ControllerBase
@@ -29,6 +31,15 @@ namespace WebRestApi.Controllers
         public TokenController(AbstractDbContext dbContext)
         {
             _dbContext = dbContext;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public IActionResult Ping() {
+            return Ok("pong");
         }
 
         /// <summary>

@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Authorization;
 namespace WebRestApi.Controllers
 {
     ///
-    [Authorize(Roles = "user")]
     [Route("api/[controller]")]
     [ApiController]
     public class UsersController : ControllerBase
@@ -34,6 +33,7 @@ namespace WebRestApi.Controllers
         /// <returns>Collection of existing users</returns>
         /// <response code="200">If operation has been completed without any exception</response>
         /// <response code="500">If something wrong had happen during getting users</response>
+        [Authorize(Roles = "admin")]
         [HttpGet]
         public async Task<IActionResult> Get()
         {
@@ -58,6 +58,7 @@ namespace WebRestApi.Controllers
         /// <returns>User by Id</returns>
         /// <response code="200">If operation has been completed without any exception</response>
         /// <response code="500">If something wrong had happen during gettting the user</response>
+        [Authorize]
         [HttpGet("{id}", Name = "GetById")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]

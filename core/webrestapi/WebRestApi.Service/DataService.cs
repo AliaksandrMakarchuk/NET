@@ -53,8 +53,8 @@ namespace WebRestApi.Service
                 return await _userRepository.UpdateAsync(new User
                 {
                     Id = user.Id,
-                        FirstName = user.FirstName,
-                        LastName = user.LastName
+                    FirstName = user.FirstName,
+                    LastName = user.LastName
                 });
             }
             catch (Exception ex)
@@ -82,7 +82,9 @@ namespace WebRestApi.Service
             return await _userRepository.AddAsync(new User
             {
                 FirstName = user.FirstName,
-                    LastName = user.LastName
+                LastName = user.LastName,
+                Email = user.Login,
+                Password = user.Password
             });
         }
 
@@ -96,10 +98,10 @@ namespace WebRestApi.Service
             var msg = await _messageRepository.AddAsync(new Message
             {
                 SenderId = message.FromId,
-                    Sender = await _userRepository.GetByIdAsync(message.FromId),
-                    ReceiverId = message.ToId,
-                    Receiver = await _userRepository.GetByIdAsync(message.ToId),
-                    Text = message.Message
+                // Sender = await _userRepository.GetByIdAsync(message.FromId),
+                ReceiverId = message.ToId,
+                // Receiver = await _userRepository.GetByIdAsync(message.ToId),
+                Text = message.Message
             });
 
             return msg != null;

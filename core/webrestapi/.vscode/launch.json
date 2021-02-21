@@ -23,20 +23,6 @@
             "sourceFileMap": {
                 "/Views": "${workspaceFolder}/Views"
             }
-        },
-        {
-            "name": "Web App Launch (console)",
-            "type": "coreclr",
-            "request": "launch",
-            "preLaunchTask": "build",
-            "program": "${workspaceFolder}/WebRestApi.WebApp/bin/Debug/netcoreapp3.1/WebRestApi.WebApp",
-            "args": [],
-            "cwd": "${workspaceFolder}/WebRestApi.WebApp/bin/Debug/netcoreapp3.1/",
-            "stopAtEntry": false,
-            "console": "internalConsole",
-            "launchBrowser": {
-                "enabled": true
-            }
         }
     ]
 }
