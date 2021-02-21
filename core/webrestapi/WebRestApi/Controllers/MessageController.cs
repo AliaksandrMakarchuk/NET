@@ -83,21 +83,21 @@ namespace WebRestApi.Controllers
         /// Get all messages sent by User
         /// </summary>
         /// <remarks></remarks>
-        /// <param name="userId">User Id</param>
+        /// <param name="id">User Id</param>
         /// <returns>Collection of messages</returns>
         /// <response code="200">If operation has been completed without any exception</response>
         /// <response code="500">If something wrong had happen during gettting the user</response>
         [Authorize(Roles = "user, admin")]
-        [HttpGet("user/{id}", Name = "GetMessagesByUserId")]
+        [HttpGet("user", Name = "GetMessagesByUserId")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetByUser(int userId)
+        public async Task<IActionResult> GetByUser([FromQuery]int id)
         {
             _logger.LogInformation(LoggingEvents.GetMessageByUser, "Get messages by user");
 
             try
             {
-                var messages = await _dataService.GetAllMessagesByUserAsync(userId);
+                var messages = await _dataService.GetAllMessagesByUserAsync(id);
                 return Ok(messages);
             }
             catch (Exception)

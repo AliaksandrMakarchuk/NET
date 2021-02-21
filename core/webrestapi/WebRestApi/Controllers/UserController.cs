@@ -64,7 +64,7 @@ namespace WebRestApi.Controllers
         [HttpGet("{id}", Name = "GetUserById")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Get(int id)
+        public async Task<IActionResult> GetById([FromRoute]int id)
         {
             _logger.LogInformation(LoggingEvents.GetUserById, "Get User by Id {0}", id);
 
