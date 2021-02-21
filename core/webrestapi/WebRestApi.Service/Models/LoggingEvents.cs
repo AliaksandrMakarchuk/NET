@@ -10,6 +10,7 @@ namespace WebRestApi.Service.Models
         public static EventId DeleteUser => new EventId(3);
         public static EventId UpdateUserName => new EventId(4);
         public static EventId SendMessage => new EventId(5);
+        public static EventId GetMessageByUser => new EventId(6);
 
         public static EventId GetUsersNotFound => new EventId(100);
         public static EventId WrongUserIdentifier => new EventId(101);
@@ -17,5 +18,6 @@ namespace WebRestApi.Service.Models
         public static EventId ErrorOnDeletingUser => new EventId(103);
         public static EventId ErrorOnUpdateUserName => new EventId(104);
         public static EventId ErrorOnSendMessage => new EventId(105);
+        public static EventId ErrorOnGettingMessageByUser => new EventId(106);
     }
 }

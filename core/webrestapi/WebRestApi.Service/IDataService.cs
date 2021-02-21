@@ -19,7 +19,11 @@ namespace WebRestApi.Service
 
         Task<User> CreateNewUserAsync(ClientUser user);
 
+        Task<Message> GetMessageById(int id);
+
         Task<IEnumerable<Message>> GetAllMessagesAsync();
+
+        Task<IEnumerable<Message>> GetAllMessagesByUserAsync(int id);
 
         Task<bool> SendMessageAsync(ClientMessage message);
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using WebRestApi.Service.Models;
 using WebRestApi.Service.Models.Client;
@@ -88,9 +89,20 @@ namespace WebRestApi.Service
             });
         }
 
+        public async Task<Message> GetMessageById(int id)
+        {
+            return await _messageRepository.GetByIdAsync(id);
+        }
+
         public async Task<IEnumerable<Message>> GetAllMessagesAsync()
         {
             return await _messageRepository.GetAllAsync();
+        }
+
+        public async Task<IEnumerable<Message>> GetAllMessagesByUserAsync(int id)
+        {
+            var allMessages = await _messageRepository.GetAllAsync();
+            return allMessages.Where(x => x.ReceiverId == id);
         }
 
         public async Task<bool> SendMessageAsync(ClientMessage message)

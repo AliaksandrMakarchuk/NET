@@ -53,13 +53,67 @@ namespace WebRestApi.Controllers
         }
 
         /// <summary>
+        /// Get Message by Id
+        /// </summary>
+        /// <remarks></remarks>
+        /// <param name="id">Message Id</param>
+        /// <returns>Message</returns>
+        /// <response code="200">If operation has been completed without any exception</response>
+        /// <response code="500">If something wrong had happen during gettting the user</response>
+        [Authorize(Roles = "admin")]
+        [HttpGet("{id}", Name = "GetMessageById")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> Get(int id)
+        {
+            _logger.LogInformation(LoggingEvents.GetMessageByUser, "Get messages by user");
+
+            try
+            {
+                var messages = await _dataService.GetMessageById(id);
+                return Ok(messages);
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new ErrorResponse { Message = "Something went wrong" });
+            }
+        }
+
+        /// <summary>
+        /// Get all messages sent by User
+        /// </summary>
+        /// <remarks></remarks>
+        /// <param name="userId">User Id</param>
+        /// <returns>Collection of messages</returns>
+        /// <response code="200">If operation has been completed without any exception</response>
+        /// <response code="500">If something wrong had happen during gettting the user</response>
+        [Authorize(Roles = "user, admin")]
+        [HttpGet("user/{id}", Name = "GetMessagesByUserId")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetByUser(int userId)
+        {
+            _logger.LogInformation(LoggingEvents.GetMessageByUser, "Get messages by user");
+
+            try
+            {
+                var messages = await _dataService.GetAllMessagesByUserAsync(userId);
+                return Ok(messages);
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new ErrorResponse { Message = "Something went wrong" });
+            }
+        }
+
+        /// <summary>
         /// Send a message
         /// </summary>
         /// <param name="message"></param>
         /// <response code="200">If operation has been completed without any exception</response>
         /// <response code="400">If a sender or receiver could not be found</response>
         /// <response code="500">If something wrong had happen during getting users</response>
-        [Authorize]
+        [Authorize(Roles = "user, admin")]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -94,13 +148,44 @@ namespace WebRestApi.Controllers
         /// <summary>
         /// Remove a message by Id
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="id">Message Id</param>
         /// <response code="200">Message has been successfully removed</response>
         /// <response code="400">Message with the specified Id could not be found</response>
         /// <response code="500">Something went wrong</response>
-        [Authorize]
+        [Authorize(Roles = "admin")]
         [HttpDelete]
         public async Task<IActionResult> Delete([FromBody] int id)
+        {
+            _logger.LogInformation(LoggingEvents.DeleteUser, $"Delete Message with Id {id}");
+
+            try
+            {
+                var message = await _dataService.DeleteMessageAsync(id);
+                if (message == null)
+                {
+                    return BadRequest(new ErrorResponse { Message = $"Message with with the Id = {id} could not be found" });
+                }
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(LoggingEvents.ErrorOnDeletingUser, $"Error on deleting Message with Id {id}.{Environment.NewLine}Exception message: {ex.Message}{Environment.NewLine}Exception StackTrace: {ex.StackTrace}");
+                var error = new ErrorResponse { Message = "Error has accured on removing message" };
+                return StatusCode(StatusCodes.Status500InternalServerError, error);
+            }
+        }
+
+        /// <summary>
+        /// Remove a message by Id
+        /// </summary>
+        /// <param name="id">Message Id</param>
+        /// <response code="200">Message has been successfully removed</response>
+        /// <response code="400">Message with the specified Id could not be found</response>
+        /// <response code="500">Something went wrong</response>
+        [Authorize(Roles = "user")]
+        [HttpDelete("user", Name = "DeleteByUserId")]
+        public async Task<IActionResult> DeleteByUser([FromBody] int id)
         {
             _logger.LogInformation(LoggingEvents.DeleteUser, $"Delete Message with Id {id}");
 

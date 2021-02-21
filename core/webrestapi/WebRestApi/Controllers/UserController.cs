@@ -1,31 +1,82 @@
-using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using System;
 using Microsoft.Extensions.Logging;
+using System.Threading.Tasks;
 using WebRestApi.Service;
 using WebRestApi.Service.Models;
+using Microsoft.AspNetCore.Authorization;
 using WebRestApi.Service.Models.Client;
+using Microsoft.EntityFrameworkCore;
 
 namespace WebRestApi.Controllers
 {
-    ///    
-    // [Authorize(AuthenticationSchemes = "Bearer")]
-    [Authorize(Roles = "admin")]
+    ///
     [Route("api/[controller]")]
     [ApiController]
-    public class AdminController : ControllerBase
+    public class UserController : ControllerBase
     {
         private ILogger _logger;
         private IDataService _dataService;
 
         ///
-        public AdminController(ILogger logger, IDataService dataService)
+        public UserController(
+            ILogger<UserController> logger,
+            IDataService dataService)
         {
             _logger = logger;
             _dataService = dataService;
+        }
+
+        /// <summary>
+        /// Get list of users
+        /// </summary>
+        /// <remarks></remarks>
+        /// <returns>Collection of existing users</returns>
+        /// <response code="200">If operation has been completed without any exception</response>
+        /// <response code="500">If something wrong had happen during getting users</response>
+        [Authorize(Roles = "admin")]
+        [HttpGet]
+        public async Task<IActionResult> Get()
+        {
+            _logger.LogInformation(LoggingEvents.GetAllUsers, "Getting all existing users");
+
+            try
+            {
+                var users = await _dataService.GetAllUsers();
+                return Ok(users);
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new ErrorResponse { Message = "Something went wrong" });
+            }
+        }
+
+        /// <summary>
+        /// Get User by Id
+        /// </summary>
+        /// <remarks></remarks>
+        /// <param name="id"></param>
+        /// <returns>User by Id</returns>
+        /// <response code="200">If operation has been completed without any exception</response>
+        /// <response code="500">If something wrong had happen during gettting the user</response>
+        [Authorize(Roles = "user, admin")]
+        [HttpGet("{id}", Name = "GetUserById")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> Get(int id)
+        {
+            _logger.LogInformation(LoggingEvents.GetUserById, "Get User by Id {0}", id);
+
+            try
+            {
+                var user = await _dataService.GetUserByIdAsync(id);
+                return Ok(user);
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new ErrorResponse { Message = "Something went wrong" });
+            }
         }
 
         /// <summary>
