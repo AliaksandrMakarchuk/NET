@@ -106,7 +106,8 @@ namespace WebRestApi.Controllers
                 var claims = new List<Claim>
                 {
                 new Claim(ClaimsIdentity.DefaultNameClaimType, user.Email),
-                new Claim(ClaimsIdentity.DefaultRoleClaimType, user.Role.Name)
+                new Claim(ClaimsIdentity.DefaultRoleClaimType, user.Role.Name),
+                new Claim("userid", user.Id.ToString())
                 };
 
                 var claimsIdentity = new ClaimsIdentity(claims, "Token", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
