@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using Microsoft.EntityFrameworkCore;
 using WebRestApi.Service.Models;
 
 namespace WebRestApi.Service
@@ -20,20 +21,35 @@ namespace WebRestApi.Service
             //     .HasForeignKey(m => m.SenderId)
             //     .OnDelete(DeleteBehavior.SetNull);
 
-            string adminRoleName = "admin";
-            string userRoleName = "user";
+            string adminRoleName = UserRole.ADMIN.RoleName;
+            string userRoleName = UserRole.USER.RoleName;
 
             string adminEmail = "admin@mail.ru";
             string adminPassword = "123456";
 
             // добавляем роли
-            Role adminRole = new Role { Id = 1, Name = adminRoleName };
-            Role userRole = new Role { Id = 2, Name = userRoleName };
-            User adminUser = new User { Id = 1, Email = adminEmail, Password = adminPassword, RoleId = adminRole.Id };
-            User generalUser = new User { Id = 2, Email = "user@mail.ru", Password = "12345", RoleId = userRole.Id };
+            Role adminRole = new Role
+            {
+                Id = Guid.NewGuid(),
+                Name = adminRoleName
+            };
+            Role userRole = new Role
+            {
+                Id = Guid.NewGuid(),
+                Name = userRoleName
+            };
+            User adminUser = new User
+            {
+                Id = Guid.NewGuid(),
+                Email = adminEmail,
+                Password = adminPassword,
+                RoleId = adminRole.Id,
+                FirstName = "Администратор",
+                LastName = string.Empty
+            };
 
             modelBuilder.Entity<Role>().HasData(new Role[] { adminRole, userRole });
-            modelBuilder.Entity<User>().HasData(new User[] { adminUser, generalUser });
+            modelBuilder.Entity<User>().HasData(new User[] { adminUser });
 
             base.OnModelCreating(modelBuilder);
         }
