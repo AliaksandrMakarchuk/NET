@@ -43,9 +43,6 @@ namespace WebRestApi
                 .SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
                 .AddApiExplorer();
 
-            services.Configure<FileLoggerOptions>(Configuration.GetSection("Logger"));
-            services.AddSingleton<BatchingLoggerProvider, FileLoggerProvider>();
-            services.AddSingleton<ILogger, BatchingLogger>();
             services.AddScoped<AbstractDbContext, WebRestApiContext>();
             services.AddDbContext<AbstractDbContext>();
             services.AddScoped<UserRepositoryBase, UserRepository>();
@@ -92,13 +89,15 @@ namespace WebRestApi
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
             var x = env.EnvironmentName;
             // if (env.IsDevelopment())
             // {
             //     app.UseDeveloperExceptionPage();
             // }
+
+            loggerFactory.AddProvider(new FileLoggerProvider(new FileLoggerOptions()));
 
             app.UseStaticFiles();
 

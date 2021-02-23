@@ -30,17 +30,17 @@ namespace WebRestApi.Service
             // добавляем роли
             Role adminRole = new Role
             {
-                Id = Guid.NewGuid(),
+                Id = 1,
                 Name = adminRoleName
             };
             Role userRole = new Role
             {
-                Id = Guid.NewGuid(),
+                Id = 2,
                 Name = userRoleName
             };
             User adminUser = new User
             {
-                Id = Guid.NewGuid(),
+                Id = 1,
                 Email = adminEmail,
                 Password = adminPassword,
                 RoleId = adminRole.Id,
