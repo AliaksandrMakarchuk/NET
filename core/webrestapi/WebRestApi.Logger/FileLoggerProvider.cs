@@ -16,10 +16,10 @@ namespace WebRestApi.Logger
         private readonly int? _maxFileSize;
         private readonly int? _maxRetainedFiles;
 
-        public FileLoggerProvider(IOptions<FileLoggerOptions> options) 
+        public FileLoggerProvider(FileLoggerOptions options) 
         //: base(options)
         {
-            var loggerOptions = options.Value;
+            var loggerOptions = options;
             _path = loggerOptions.LogDirectory;
             _fileName = loggerOptions.FileName;
             _maxFileSize = loggerOptions.FileSizeLimit * 1024 * 1024;

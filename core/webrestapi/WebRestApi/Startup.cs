@@ -43,6 +43,7 @@ namespace WebRestApi
                 .SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
                 .AddApiExplorer();
 
+            services.Configure<FileLoggerOptions>(Configuration.GetSection("Logger"));
             services.AddScoped<AbstractDbContext, WebRestApiContext>();
             services.AddDbContext<AbstractDbContext>();
             services.AddScoped<UserRepositoryBase, UserRepository>();
@@ -78,7 +79,6 @@ namespace WebRestApi
                 });
             services.AddAuthorization();
 
-            services.Configure<FileLoggerOptions>(Configuration.GetSection("Logger"));
             services.ConfigureSwaggerGen(setup =>
             {
                 var basePath = System.AppDomain.CurrentDomain.BaseDirectory;
@@ -97,7 +97,9 @@ namespace WebRestApi
             //     app.UseDeveloperExceptionPage();
             // }
 
-            loggerFactory.AddProvider(new FileLoggerProvider(new FileLoggerOptions()));
+            FileLoggerOptions instance = new FileLoggerOptions();
+            Configuration.Bind(instance);
+            loggerFactory.AddProvider(new FileLoggerProvider(instance));
 
             app.UseStaticFiles();
 
