@@ -1,6 +1,7 @@
-﻿using Microsoft.Extensions.Logging;
-using System;
+﻿using System;
+using System.IO;
 using System.Text;
+using Microsoft.Extensions.Logging;
 
 namespace WebRestApi.Logger
 {
@@ -8,11 +9,12 @@ namespace WebRestApi.Logger
     {
         private readonly BatchingLoggerProvider _provider;
         private readonly string _category;
+        private static object _lock = new Object();
 
-        public BatchingLogger()
+        public BatchingLogger(BatchingLoggerProvider provider, string category)
         {
-            _provider = null;
-            _category = null;
+            _provider = provider;
+            _category = category;
         }
 
         public IDisposable BeginScope<TState>(TState state)
@@ -33,21 +35,29 @@ namespace WebRestApi.Logger
                 return;
             }
 
-            var builder = new StringBuilder();
-            builder.Append(timestamp.ToString("yyyy-MM-dd HH:mm:ss.fff zzz"));
-            builder.Append(" [");
-            builder.Append(logLevel.ToString());
-            builder.Append("] ");
-            // builder.Append(_category);
-            builder.Append(": ");
-            builder.AppendLine(formatter(state, exception));
-
-            if(exception != null)
+            if (formatter == null)
             {
-                builder.AppendLine(exception.ToString());
+                return;
             }
 
-            // _provider.AddMessage(timestamp, builder.ToString());
+            lock(_lock)
+            {
+                var builder = new StringBuilder();
+                builder.Append(timestamp.ToString("yyyy-MM-dd HH:mm:ss.fff zzz"));
+                builder.Append(" [");
+                builder.Append(logLevel.ToString());
+                builder.Append("] ");
+                builder.Append(_category);
+                builder.Append(": ");
+                builder.AppendLine(formatter(state, exception));
+
+                if (exception != null)
+                {
+                    builder.AppendLine(exception.ToString());
+                }
+
+                _provider.AddMessage(timestamp, builder.ToString());
+            }
         }
 
         public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)

@@ -3,14 +3,15 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
+using WebRestApi.Models;
 using WebRestApi.Service;
 using WebRestApi.Service.Models;
-using WebRestApi.Models;
-using Microsoft.AspNetCore.Authorization;
 
 namespace WebRestApi.Controllers
 {
@@ -23,14 +24,18 @@ namespace WebRestApi.Controllers
     public class TokenController : ControllerBase
     {
         private readonly AbstractDbContext _dbContext;
+        private readonly ILogger<TokenController> _logger;
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="dbContext"></param>
-        public TokenController(AbstractDbContext dbContext)
+        public TokenController(
+            AbstractDbContext dbContext,
+            ILoggerFactory loggerFactory)
         {
             _dbContext = dbContext;
+            _logger = loggerFactory.CreateLogger<TokenController>();
         }
 
         /// <summary>
@@ -38,7 +43,9 @@ namespace WebRestApi.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        public IActionResult Ping() {
+        public IActionResult Ping()
+        {
+            _logger.LogInformation(LoggingEvents.GetUserById, "pong");
             return Ok("pong");
         }
 
@@ -51,11 +58,11 @@ namespace WebRestApi.Controllers
         /// <response code="401">If user input invalid login and/or password</response>
         /// <response code="500">If something wrong had happen during token generation</response>
         [HttpPost]
-        public async Task<IActionResult> Token([FromBody]Credentials credentials)
+        public async Task<IActionResult> Token([FromBody] Credentials credentials)
         {
             var isValid = ModelState.IsValid;
             JsonResult result = null;
-            var (login, password) = (credentials.Login, credentials.Password);
+            var(login, password) = (credentials.Login, credentials.Password);
 
             try
             {

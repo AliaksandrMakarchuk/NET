@@ -27,7 +27,7 @@ namespace WebRestApi
         public Startup(IWebHostEnvironment env)
         {
             var builder = new ConfigurationBuilder()
-                .SetBasePath(env.ContentRootPath)
+                .SetBasePath(Path.Combine(env.ContentRootPath, env.ApplicationName))
                 .AddJsonFile("appsettings.json", optional : true, reloadOnChange : true);
 
             Configuration = builder.Build();
@@ -97,9 +97,7 @@ namespace WebRestApi
             //     app.UseDeveloperExceptionPage();
             // }
 
-            FileLoggerOptions instance = new FileLoggerOptions();
-            Configuration.Bind(instance);
-            loggerFactory.AddProvider(new FileLoggerProvider(instance));
+            loggerFactory.AddProvider(new FileLoggerProvider(Configuration.GetSection("Logger").Get<BatchingLoggerOptions>()));
 
             app.UseStaticFiles();
 
