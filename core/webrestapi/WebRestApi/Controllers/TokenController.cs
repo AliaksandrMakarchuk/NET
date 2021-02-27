@@ -30,6 +30,7 @@ namespace WebRestApi.Controllers
         /// 
         /// </summary>
         /// <param name="dbContext"></param>
+        /// <param name="loggerFactory"></param>
         public TokenController(
             AbstractDbContext dbContext,
             ILoggerFactory loggerFactory)
@@ -39,7 +40,7 @@ namespace WebRestApi.Controllers
         }
 
         /// <summary>
-        /// 
+        /// Just for testing purposes
         /// </summary>
         /// <returns></returns>
         [HttpGet]

@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -16,7 +15,7 @@ namespace WebRestApi.Logger
         private readonly int? _maxFileSize;
         private readonly int? _maxRetainedFiles;
 
-        public FileLoggerProvider(BatchingLoggerOptions options) 
+        public FileLoggerProvider(FileLoggerOptions options) 
         : base(options)
         {
             var loggerOptions = options;

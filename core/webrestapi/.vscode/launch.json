@@ -11,7 +11,7 @@
             "preLaunchTask": "build",
             "program": "${workspaceFolder}/WebRestApi/bin/Debug/netcoreapp3.1/WebRestApi",
             "args": [],
-            "cwd": "${workspaceFolder}",
+            "cwd": "${workspaceFolder}/WebRestApi",
             "stopAtEntry": false,
             "serverReadyAction": {
                 "action": "openExternally",

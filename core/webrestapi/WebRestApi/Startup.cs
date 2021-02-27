@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.NewtonsoftJson;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -27,7 +26,7 @@ namespace WebRestApi
         public Startup(IWebHostEnvironment env)
         {
             var builder = new ConfigurationBuilder()
-                .SetBasePath(Path.Combine(env.ContentRootPath, env.ApplicationName))
+                .SetBasePath(Path.Combine(env.ContentRootPath))
                 .AddJsonFile("appsettings.json", optional : true, reloadOnChange : true);
 
             Configuration = builder.Build();
@@ -43,7 +42,6 @@ namespace WebRestApi
                 .SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
                 .AddApiExplorer();
 
-            services.Configure<FileLoggerOptions>(Configuration.GetSection("Logger"));
             services.AddScoped<AbstractDbContext, WebRestApiContext>();
             services.AddDbContext<AbstractDbContext>();
             services.AddScoped<UserRepositoryBase, UserRepository>();
@@ -97,7 +95,12 @@ namespace WebRestApi
             //     app.UseDeveloperExceptionPage();
             // }
 
-            loggerFactory.AddProvider(new FileLoggerProvider(Configuration.GetSection("Logger").Get<BatchingLoggerOptions>()));
+            loggerFactory.AddProvider(
+                new FileLoggerProvider(
+                    Configuration.GetSection("Logger")
+                    .Get<FileLoggerOptions>()
+                )
+            );
 
             app.UseStaticFiles();
 

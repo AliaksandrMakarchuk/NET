@@ -1,7 +1,6 @@
 ﻿namespace WebRestApi.Logger
 {
-    public class FileLoggerOptions 
-    //: BatchingLoggerOptions
+    public class FileLoggerOptions : BatchingLoggerOptions
     {
         public string LogDirectory { get; set; }
         public string FileName { get; set; }
