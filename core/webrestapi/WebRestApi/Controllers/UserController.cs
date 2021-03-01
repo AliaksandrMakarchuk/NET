@@ -1,13 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
-using System;
-using Microsoft.Extensions.Logging;
+﻿using System;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using WebRestApi.Service;
 using WebRestApi.Service.Models;
-using Microsoft.AspNetCore.Authorization;
 using WebRestApi.Service.Models.Client;
-using Microsoft.EntityFrameworkCore;
 
 namespace WebRestApi.Controllers
 {
@@ -63,15 +64,22 @@ namespace WebRestApi.Controllers
         [Authorize(Roles = "user, admin")]
         [HttpGet("{id}", Name = "GetUserById")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetById([FromRoute]int id)
+        public async Task<IActionResult> GetById([FromRoute] int id)
         {
             _logger.LogInformation(LoggingEvents.GetUserById, "Get User by Id {0}", id);
 
             try
             {
-                var user = await _dataService.GetUserByIdAsync(id);
-                return Ok(user);
+                if (this.User.FindFirst(x => x.Type == ClaimsIdentity.DefaultRoleClaimType).Value == UserRole.ADMIN.RoleName ||
+                    this.User.FindFirst(x => x.Type == ClaimTypes.Sid).Value == id.ToString())
+                {
+                    var user = await _dataService.GetUserByIdAsync(id);
+                    return Ok(user);
+                }
+
+                return Unauthorized();
             }
             catch (Exception)
             {
@@ -89,6 +97,7 @@ namespace WebRestApi.Controllers
         /// <response code="201">If new User has been successfully created</response>
         /// <response code="400">If the First or Last name was not specified</response>
         /// <response code="500">If something wrong had happen during the User creation</response>
+        [Authorize(Roles = "admin")]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -130,18 +139,14 @@ namespace WebRestApi.Controllers
         {
             _logger.LogInformation(LoggingEvents.GetUserById, $"Update User with Id {user.Id}");
 
+            if (this.User.FindFirst(x => x.Type == ClaimsIdentity.DefaultRoleClaimType).Value == UserRole.USER.RoleName &&
+                this.User.FindFirst(x => x.Type == ClaimTypes.Sid).Value != user.Id.ToString())
+            {
+                return Unauthorized();
+            }
+
             try
             {
-                // var existingUser = await _dataService.GetUserById(user.Id);
-
-                // if (existingUser == null)
-                // {
-                //     return BadRequest(new ErrorResponse { Message = "User with specified identifier could not be found" });
-                // }
-
-                // var updatedUser = await _dataService.UpdateUser(existingUser);
-                // return Ok(updatedUser);
-
                 var updatedUser = await _dataService.UpdateUserAsync(user);
 
                 if (updatedUser == null)
@@ -161,6 +166,43 @@ namespace WebRestApi.Controllers
         /// <summary>
         /// Delete user
         /// </summary>
+        /// <remarks></remarks>
+        /// <response code="200">If User has heen successfully deleted</response>
+        /// <response code="400">If could not find User by id</response>
+        /// <response code="500">If something went wrong during removing the User</response>
+        [HttpDelete]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> Delete()
+        {
+            if (this.User.FindFirst(x => x.Type == ClaimsIdentity.DefaultRoleClaimType).Value == UserRole.ADMIN.RoleName)
+            {
+                return Unauthorized();
+            }
+
+            var userId = int.Parse(this.User.FindFirst(x => x.Type == ClaimTypes.Sid).Value);
+
+            _logger.LogInformation(LoggingEvents.DeleteUser, $"Delete User with Id {userId}");
+
+            try
+            {
+                var user = await _dataService.DeleteUserAsync(userId);
+                if (user == null)
+                {
+                    return BadRequest(new ErrorResponse { Message = $"Could not find a user by id: {userId}" });
+                }
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(LoggingEvents.ErrorOnDeletingUser, $"Error on deleting User with Id {userId}.{Environment.NewLine}Exception message: {ex.Message}{Environment.NewLine}Exception StackTrace: {ex.StackTrace}");
+                return StatusCode(StatusCodes.Status500InternalServerError, new ErrorResponse { Message = "Error on removing specified User" });
+            }
+        }
+
+        /// <summary>
+        /// Delete user
+        /// </summary>
         /// <param name="id">User Id</param>
         /// <remarks></remarks>
         /// <response code="200">If User has heen successfully deleted</response>
@@ -172,6 +214,12 @@ namespace WebRestApi.Controllers
         public async Task<IActionResult> Delete([FromBody] int id)
         {
             _logger.LogInformation(LoggingEvents.DeleteUser, $"Delete User with Id {id}");
+
+            if (this.User.FindFirst(x => x.Type == ClaimsIdentity.DefaultRoleClaimType).Value == UserRole.USER.RoleName ||
+                this.User.FindFirst(x => x.Type == ClaimTypes.Sid).Value == id.ToString())
+            {
+                return Unauthorized();
+            }
 
             try
             {
