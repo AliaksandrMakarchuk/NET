@@ -91,7 +91,7 @@ namespace WebRestApi.Controllers
         [HttpGet("user", Name = "GetMessagesByUserId")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetByUser([FromQuery]int id)
+        public async Task<IActionResult> GetByUser([FromQuery] int id)
         {
             _logger.LogInformation(LoggingEvents.GetMessageByUser, "Get messages by user");
 

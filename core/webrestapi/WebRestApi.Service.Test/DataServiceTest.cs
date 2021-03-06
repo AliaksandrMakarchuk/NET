@@ -107,7 +107,7 @@ namespace WebRestApi.Service.Tests
             User user = null;
             _userRepositoryMock.Setup(x => x.AddAsync(It.IsAny<User>())).Callback<User>(x => user = x);
 
-            await _dataService.CreateNewUserAsync(new Models.Client.ClientUser() { FirstName = "fn", LastName = "ln"});
+            await _dataService.CreateNewUserAsync(new Models.Client.IdentityUser() { FirstName = "fn", LastName = "ln"});
 
             _userRepositoryMock.Verify(x => x.AddAsync(It.IsAny<User>()));
             Assert.IsNotNull(user);

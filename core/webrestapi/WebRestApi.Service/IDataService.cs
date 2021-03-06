@@ -7,17 +7,17 @@ namespace WebRestApi.Service
 {
     public interface IDataService
     {
-        Task<IEnumerable<User>> GetAllUsers();
+        Task<IEnumerable<ClientUser>> GetAllUsers();
 
-        Task<IEnumerable<User>> GetUsersByNameAsync(string userName);
+        Task<IEnumerable<ClientUser>> GetUsersByNameAsync(string userName);
 
-        Task<User> GetUserByIdAsync(int id);
+        Task<ClientUser> GetUserByIdAsync(int id);
 
-        Task<User> DeleteUserAsync(int id);
+        Task<ClientUser> DeleteUserAsync(int id);
 
-        Task<User> UpdateUserAsync(ClientUser user);
+        Task<ClientUser> UpdateUserAsync(ClientUser user);
 
-        Task<User> CreateNewUserAsync(ClientUser user);
+        Task<ClientUser> CreateNewUserAsync(IdentityUser user);
 
         Task<Message> GetMessageById(int id);
 

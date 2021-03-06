@@ -64,6 +64,7 @@ namespace WebRestApi.Controllers
         [Authorize(Roles = "user, admin")]
         [HttpGet("{id}", Name = "GetUserById")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetById([FromRoute] int id)
@@ -102,7 +103,7 @@ namespace WebRestApi.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Post([FromBody] ClientUser user)
+        public async Task<IActionResult> Post([FromBody] IdentityUser user)
         {
             if (string.IsNullOrWhiteSpace(user.FirstName) || string.IsNullOrWhiteSpace(user.LastName))
             {
@@ -166,57 +167,26 @@ namespace WebRestApi.Controllers
         /// <summary>
         /// Delete user
         /// </summary>
-        /// <remarks></remarks>
-        /// <response code="200">If User has heen successfully deleted</response>
-        /// <response code="400">If could not find User by id</response>
-        /// <response code="500">If something went wrong during removing the User</response>
-        [HttpDelete]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Delete()
-        {
-            if (this.User.FindFirst(x => x.Type == ClaimsIdentity.DefaultRoleClaimType).Value == UserRole.ADMIN.RoleName)
-            {
-                return Unauthorized();
-            }
-
-            var userId = int.Parse(this.User.FindFirst(x => x.Type == ClaimTypes.Sid).Value);
-
-            _logger.LogInformation(LoggingEvents.DeleteUser, $"Delete User with Id {userId}");
-
-            try
-            {
-                var user = await _dataService.DeleteUserAsync(userId);
-                if (user == null)
-                {
-                    return BadRequest(new ErrorResponse { Message = $"Could not find a user by id: {userId}" });
-                }
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(LoggingEvents.ErrorOnDeletingUser, $"Error on deleting User with Id {userId}.{Environment.NewLine}Exception message: {ex.Message}{Environment.NewLine}Exception StackTrace: {ex.StackTrace}");
-                return StatusCode(StatusCodes.Status500InternalServerError, new ErrorResponse { Message = "Error on removing specified User" });
-            }
-        }
-
-        /// <summary>
-        /// Delete user
-        /// </summary>
         /// <param name="id">User Id</param>
         /// <remarks></remarks>
         /// <response code="200">If User has heen successfully deleted</response>
         /// <response code="400">If could not find User by id</response>
+        /// <response code="401">If User does not have rights for deleting user</response>
         /// <response code="500">If something went wrong during removing the User</response>
         [HttpDelete]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Delete([FromBody] int id)
         {
-            _logger.LogInformation(LoggingEvents.DeleteUser, $"Delete User with Id {id}");
+            _logger.LogInformation(LoggingEvents.DeleteUser, $"Delete User with Id: {id}");
 
-            if (this.User.FindFirst(x => x.Type == ClaimsIdentity.DefaultRoleClaimType).Value == UserRole.USER.RoleName ||
-                this.User.FindFirst(x => x.Type == ClaimTypes.Sid).Value == id.ToString())
+            var userRole = this.User.FindFirst(x => x.Type == ClaimsIdentity.DefaultRoleClaimType).Value;
+            var userId = this.User.FindFirst(x => x.Type == ClaimTypes.Sid).Value;
+            
+            if (userRole == UserRole.ADMIN.RoleName && userId == id.ToString() ||
+                userRole == UserRole.USER.RoleName && userId != id.ToString())
             {
                 return Unauthorized();
             }

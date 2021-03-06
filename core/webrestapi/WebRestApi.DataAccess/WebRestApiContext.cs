@@ -8,7 +8,6 @@ namespace WebRestApi.DataAccess
     {
         public WebRestApiContext(DbContextOptions<AbstractDbContext> options) : base(options)
         {
-            Database.EnsureDeleted();
             Database.EnsureCreated();
         }
 
@@ -16,7 +15,6 @@ namespace WebRestApi.DataAccess
         {
             var dbPath = Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, "messaging.db");
             optionsBuilder.UseSqlite($"Data Source={dbPath}");
-            // optionsBuilder.UseSqlite($"Data Source={System.AppDomain.CurrentDomain.BaseDirectory}/messaging.db");
         }
     }
 }

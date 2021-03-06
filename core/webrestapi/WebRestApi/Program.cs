@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Hosting;
 using System.Net;
+using Microsoft.AspNetCore;
+using Microsoft.AspNetCore.Hosting;
 
 #pragma warning disable 1591
 namespace WebRestApi

@@ -95,7 +95,7 @@ namespace WebRestApi.Controllers
 
                 result = new JsonResult(response);
             }
-            catch
+            catch (Exception e)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, new ErrorResponse { Message = "Something wen wrong" });
             }
