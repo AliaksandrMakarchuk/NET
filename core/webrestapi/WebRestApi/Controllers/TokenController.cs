@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using WebRestApi.Models;
@@ -23,20 +22,20 @@ namespace WebRestApi.Controllers
     [ApiController]
     public class TokenController : ControllerBase
     {
-        private readonly AbstractDbContext _dbContext;
+        private readonly IDataService _dataService;
         private readonly ILogger<TokenController> _logger;
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="dbContext"></param>
         /// <param name="loggerFactory"></param>
+        /// <param name="dataService"></param>
         public TokenController(
-            AbstractDbContext dbContext,
-            ILoggerFactory loggerFactory)
+            ILoggerFactory loggerFactory,
+            IDataService dataService)
         {
-            _dbContext = dbContext;
             _logger = loggerFactory.CreateLogger<TokenController>();
+            _dataService = dataService;
         }
 
         /// <summary>
@@ -63,11 +62,10 @@ namespace WebRestApi.Controllers
         {
             var isValid = ModelState.IsValid;
             JsonResult result = null;
-            var(login, password) = (credentials.Login, credentials.Password);
 
             try
             {
-                var identity = await GetIdentity(login, password);
+                var identity = await GetIdentity(credentials.Login, credentials.Password);
 
                 if (identity == null)
                 {
@@ -95,7 +93,7 @@ namespace WebRestApi.Controllers
 
                 result = new JsonResult(response);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, new ErrorResponse { Message = "Something wen wrong" });
             }
@@ -105,17 +103,15 @@ namespace WebRestApi.Controllers
 
         private async Task<ClaimsIdentity> GetIdentity(string login, string password)
         {
-            var user = await _dbContext.Users
-                .Include(u => u.Role)
-                .SingleOrDefaultAsync(x => x.Email == login && x.Password == password);
+            var user = await _dataService.GetUserByLoginPasswordAsync(login, password);
 
             if (user != null)
             {
                 var claims = new List<Claim>
                 {
-                new Claim(ClaimsIdentity.DefaultNameClaimType, user.Email),
-                new Claim(ClaimsIdentity.DefaultRoleClaimType, user.Role.Name),
-                new Claim(ClaimTypes.Sid, user.Id.ToString())
+                    new Claim(ClaimsIdentity.DefaultNameClaimType, user.Email),
+                    new Claim(ClaimsIdentity.DefaultRoleClaimType, user.Role.Name),
+                    new Claim(ClaimTypes.Sid, user.Id.ToString())
                 };
 
                 var claimsIdentity = new ClaimsIdentity(claims, "Token", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);

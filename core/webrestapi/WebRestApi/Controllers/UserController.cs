@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -12,8 +13,12 @@ using WebRestApi.Service.Models.Client;
 
 namespace WebRestApi.Controllers
 {
-    ///
+    /// <summary>
+    /// 
+    /// </summary>
     [Route("api/[controller]")]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [Authorize]
     [ApiController]
     public class UserController : ControllerBase
     {
@@ -35,8 +40,14 @@ namespace WebRestApi.Controllers
         /// <remarks></remarks>
         /// <returns>Collection of existing users</returns>
         /// <response code="200">If operation has been completed without any exception</response>
+        /// <response code="401">If User is not authorized</response>
+        /// <response code="403">If the access is forbidden</response>
         /// <response code="500">If something wrong had happen during getting users</response>
         [Authorize(Roles = "admin")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet]
         public async Task<IActionResult> Get()
         {
@@ -45,7 +56,8 @@ namespace WebRestApi.Controllers
             try
             {
                 var users = await _dataService.GetAllUsers();
-                return Ok(users);
+
+                return Ok(users.Select(u => u.ToClientUser()));
             }
             catch (Exception)
             {

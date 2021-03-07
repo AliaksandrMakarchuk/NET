@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using WebRestApi.Service;
@@ -12,17 +11,15 @@ namespace WebRestApi.DataAccess.Repository
     {
         public UserRepository(AbstractDbContext context) : base(context) { }
 
-        public override async Task<IEnumerable<User>> GetByNameAsync(string userName)
+        public override async Task<User> GetByLoginPasswordAsync(string login, string password)
         {
-            string query = $"SELECT * FROM Users WHERE UPPER(FirstName) LIKE '%{userName}%' or UPPER(LastName) LIKE '%{userName}%'";
-            return await Context.Users.FromSqlRaw(query).Include(u => u.Role).ToListAsync();
+            return await Context.Users
+                .Include(u => u.Role)
+                .SingleOrDefaultAsync(x => x.Email == login && x.Password == password);
         }
 
         public override async Task<User> AddAsync(User user)
         {
-            var roles = await Context.Roles.ToListAsync();
-            user.RoleId = roles.Single(x => x.Name == "user").Id;
-            
             var newUser = await Context.Users.AddAsync(user);
             await Context.SaveChangesAsync();
 

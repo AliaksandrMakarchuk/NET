@@ -1,4 +1,4 @@
-using System.Net;
+﻿using System.Net;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 
@@ -14,10 +14,6 @@ namespace WebRestApi
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-            // .ConfigureLogging((context, builder) =>
-            // {
-            //     builder.AddFile();
-            // })
             .UseKestrel(serverOptions =>
             {
                 serverOptions.Listen(IPAddress.Loopback, 3000);

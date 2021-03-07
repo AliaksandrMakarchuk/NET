@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using WebRestApi.Service.Models;
 
 namespace WebRestApi.Service.Repository
@@ -8,6 +7,6 @@ namespace WebRestApi.Service.Repository
     {
         protected UserRepositoryBase(AbstractDbContext context) : base(context) { }
 
-        public abstract Task<IEnumerable<User>> GetByNameAsync(string userName);
+        public abstract Task<User> GetByLoginPasswordAsync(string login, string password);
     }
 }

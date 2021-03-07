@@ -19,8 +19,8 @@ namespace WebRestApi.Controllers
     [ApiController]
     public class MessageController : ControllerBase
     {
-        private ILogger _logger;
-        private IDataService _dataService;
+        private readonly ILogger _logger;
+        private readonly IDataService _dataService;
 
         /// <summary>
         /// Constructor
