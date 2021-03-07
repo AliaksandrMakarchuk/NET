@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using WebRestApi.Service.Models;
 using WebRestApi.Service.Models.Client;
@@ -21,11 +22,11 @@ namespace WebRestApi.Service
 
         Task<Message> GetMessageById(int id);
 
-        Task<IEnumerable<Message>> GetAllMessagesAsync();
-
-        Task<IEnumerable<Message>> GetAllMessagesByUserAsync(int id);
+        Task<IEnumerable<Message>> GetAllMessagesAsync(ClaimsPrincipal user);
 
         Task<bool> SendMessageAsync(ClientMessage message);
+
+        Task<ClientMessage> UpdateMessageAsync(ClientMessage message);
 
         Task<Message> DeleteMessageAsync(int id);
     }

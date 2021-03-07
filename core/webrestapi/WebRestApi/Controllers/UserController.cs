@@ -65,7 +65,7 @@ namespace WebRestApi.Controllers
         [HttpGet("{id}", Name = "GetUserById")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetById([FromRoute] int id)
         {
@@ -80,7 +80,7 @@ namespace WebRestApi.Controllers
                     return Ok(user);
                 }
 
-                return Unauthorized();
+                return Forbid();
             }
             catch (Exception)
             {
@@ -176,7 +176,7 @@ namespace WebRestApi.Controllers
         [HttpDelete]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Delete([FromBody] int id)
         {
@@ -188,7 +188,7 @@ namespace WebRestApi.Controllers
             if (userRole == UserRole.ADMIN.RoleName && userId == id.ToString() ||
                 userRole == UserRole.USER.RoleName && userId != id.ToString())
             {
-                return Unauthorized();
+                return Forbid();
             }
 
             try

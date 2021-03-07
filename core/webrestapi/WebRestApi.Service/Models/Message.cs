@@ -10,11 +10,11 @@ namespace WebRestApi.Service.Models
         public int Id { get; set; }
         public string Text { get; set; }
 
-        public int? SenderId { get; set; }
+        public int SenderId { get; set; }
         [NotMapped]
         public User Sender { get; set; }
 
-        public int? ReceiverId { get; set; }
+        public int ReceiverId { get; set; }
         [NotMapped]
         public User Receiver { get; set; }
 
@@ -30,9 +30,9 @@ namespace WebRestApi.Service.Models
             return other != null &&
                    Id == other.Id &&
                    Text == other.Text &&
-                   EqualityComparer<int?>.Default.Equals(SenderId, other.SenderId) &&
+                   EqualityComparer<int>.Default.Equals(SenderId, other.SenderId) &&
                    EqualityComparer<User>.Default.Equals(Sender, other.Sender) &&
-                   EqualityComparer<int?>.Default.Equals(ReceiverId, other.ReceiverId) &&
+                   EqualityComparer<int>.Default.Equals(ReceiverId, other.ReceiverId) &&
                    EqualityComparer<User>.Default.Equals(Receiver, other.Receiver) &&
                    EqualityComparer<ICollection<Comment>>.Default.Equals(Comments, other.Comments);
         }

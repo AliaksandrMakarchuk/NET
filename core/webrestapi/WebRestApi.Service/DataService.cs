@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using WebRestApi.Service.Models;
 using WebRestApi.Service.Models.Client;
@@ -68,7 +69,7 @@ namespace WebRestApi.Service
         {
             try
             {
-                var existingUser = await _userRepository.GetByIdAsync(user.Id);
+                var existingUser = await _userRepository.GetByIdAsync(user.Id.Value);
 
                 if (existingUser == null)
                 {
@@ -77,17 +78,17 @@ namespace WebRestApi.Service
 
                 var usr = await _userRepository.UpdateAsync(new User
                 {
-                    Id = user.Id,
-                    FirstName = user.FirstName,
-                    LastName = user.LastName
+                    Id = user.Id.Value,
+                        FirstName = user.FirstName,
+                        LastName = user.LastName
                 });
 
                 return new ClientUser
                 {
                     Id = usr.Id,
-                    FirstName = usr.FirstName,
-                    LastName = usr.LastName,
-                    RoleName = usr.Role.Name
+                        FirstName = usr.FirstName,
+                        LastName = usr.LastName,
+                        RoleName = usr.Role.Name
                 };
             }
             catch (Exception ex)
@@ -110,12 +111,12 @@ namespace WebRestApi.Service
             var usr = await _userRepository.DeleteAsync(user);
 
             return new ClientUser
-                {
-                    Id = usr.Id,
+            {
+                Id = usr.Id,
                     FirstName = usr.FirstName,
                     LastName = usr.LastName,
                     RoleName = usr.Role.Name
-                };
+            };
         }
 
         public async Task<ClientUser> CreateNewUserAsync(IdentityUser user)
@@ -129,42 +130,78 @@ namespace WebRestApi.Service
             });
 
             return new ClientUser
-                {
-                    Id = usr.Id,
+            {
+                Id = usr.Id,
                     FirstName = usr.FirstName,
                     LastName = usr.LastName,
                     RoleName = usr.Role.Name
-                };
+            };
         }
 
         public async Task<Message> GetMessageById(int id)
         {
-            return await _messageRepository.GetByIdAsync(id);
+            var message = await _messageRepository.GetByIdAsync(id);
+
+            message.Sender = await _userRepository.GetByIdAsync(message.SenderId);
+            message.Receiver = await _userRepository.GetByIdAsync(message.ReceiverId);
+
+            return message;
         }
 
-        public async Task<IEnumerable<Message>> GetAllMessagesAsync()
-        {
-            return await _messageRepository.GetAllAsync();
-        }
-
-        public async Task<IEnumerable<Message>> GetAllMessagesByUserAsync(int id)
+        public async Task<IEnumerable<Message>> GetAllMessagesAsync(ClaimsPrincipal user)
         {
             var allMessages = await _messageRepository.GetAllAsync();
-            return allMessages.Where(x => x.ReceiverId == id);
+
+            foreach (var message in allMessages)
+            {
+                message.Sender = await _userRepository.GetByIdAsync(message.SenderId);
+                message.Receiver = await _userRepository.GetByIdAsync(message.ReceiverId);
+            }
+
+            if (user.FindFirst(x => x.Type == ClaimsIdentity.DefaultRoleClaimType).Value == UserRole.ADMIN.RoleName)
+            {
+                return allMessages;
+            }
+
+            var userId = int.Parse(user.FindFirst(x => x.Type == ClaimTypes.Sid).Value);
+
+            return allMessages.Where(x => x.SenderId == userId);
         }
 
         public async Task<bool> SendMessageAsync(ClientMessage message)
         {
             var msg = await _messageRepository.AddAsync(new Message
             {
-                SenderId = message.FromId,
-                    // Sender = await _userRepository.GetByIdAsync(message.FromId),
-                    ReceiverId = message.ToId,
-                    // Receiver = await _userRepository.GetByIdAsync(message.ToId),
+                SenderId = message.From.Id.Value,
+                    Sender = await _userRepository.GetByIdAsync(message.From.Id.Value),
+                    ReceiverId = message.To.Id.Value,
+                    Receiver = await _userRepository.GetByIdAsync(message.To.Id.Value),
                     Text = message.Message
             });
 
             return msg != null;
+        }
+
+        public async Task<ClientMessage> UpdateMessageAsync(ClientMessage message)
+        {
+            var msg = await _messageRepository.GetByIdAsync(message.Id);
+
+            if (msg == null)
+            {
+                return null;
+            }
+
+            msg.Text = message.Message;
+
+            msg = await _messageRepository.UpdateAsync(msg);
+
+            return new ClientMessage
+            {
+                Id = msg.Id,
+                From = message.From ?? ToClientUser(await _userRepository.GetByIdAsync(msg.SenderId)),
+                To = message.To ?? ToClientUser(await _userRepository.GetByIdAsync(msg.ReceiverId)),
+                Message = message.Message
+            };
         }
 
         public async Task<Message> DeleteMessageAsync(int id)
@@ -177,6 +214,15 @@ namespace WebRestApi.Service
             }
 
             return await _messageRepository.DeleteAsync(message);
+        }
+
+        private ClientUser ToClientUser(User user) {
+            return new ClientUser {
+                Id = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                RoleName = user.Role.Name
+            };
         }
     }
 }
