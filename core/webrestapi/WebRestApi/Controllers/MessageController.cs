@@ -162,8 +162,8 @@ namespace WebRestApi.Controllers
             {
                 var result = await _dataService.SendMessageAsync(new ClientMessage
                 {
-                    From = userFrom,
-                    To = userTo,
+                    From = userFrom.ToClientUser(),
+                    To = userTo.ToClientUser(),
                     Message = message.Message
                 });
 

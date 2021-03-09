@@ -1,4 +1,4 @@
-using System.IO;
+﻿using System.IO;
 using System.Reflection;
 using System.Text.Json;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -45,6 +45,7 @@ namespace WebRestApi
             services.AddScoped<AbstractDbContext, WebRestApiContext>();
             services.AddDbContext<AbstractDbContext>();
             services.AddScoped<UserRepositoryBase, UserRepository>();
+            services.AddScoped<RoleRepositoryBase, RoleRepository>();
             services.AddScoped<MessageRepositoryBase, MessageRepository>();
             services.AddScoped<CommentRepositoryBase, CommentRepository>();
             services.AddScoped<IDataService, DataService>();
